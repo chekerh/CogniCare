@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { signIn } from '../../lib/auth';
 import { LogIn } from 'lucide-react';
+import { useToast } from '../../contexts/ToastContext';
+import { validateEmail } from '../../lib/validation';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -12,17 +14,35 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { showError, showSuccess } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validation
+    if (!validateEmail(email)) {
+      setError('البريد الإلكتروني غير صحيح');
+      showError('البريد الإلكتروني غير صحيح');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+      showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+      return;
+    }
+
     setLoading(true);
 
     try {
       await signIn(email, password);
+      showSuccess('تم تسجيل الدخول بنجاح');
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      const errorMessage = err instanceof Error ? err.message : 'فشل تسجيل الدخول';
+      setError(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

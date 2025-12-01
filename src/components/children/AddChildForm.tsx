@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
+import { validateName, validateAge, sanitizeInput } from '../../lib/validation';
 import { X } from 'lucide-react';
 
 interface AddChildFormProps {
@@ -10,6 +12,7 @@ interface AddChildFormProps {
 
 export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
   const { user } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -41,22 +44,38 @@ export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
     e.preventDefault();
     if (!user) return;
 
+    // Validation
+    const nameValidation = validateName(formData.name);
+    if (!nameValidation.valid) {
+      showError(nameValidation.error || 'اسم غير صحيح');
+      return;
+    }
+
+    const age = parseInt(formData.age);
+    const ageValidation = validateAge(age);
+    if (!ageValidation.valid) {
+      showError(ageValidation.error || 'عمر غير صحيح');
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await supabase.from('children').insert({
         mother_id: user.id,
-        name: formData.name,
-        age: parseInt(formData.age),
+        name: sanitizeInput(formData.name),
+        age: age,
         gender: formData.gender,
         diagnosis: formData.diagnosis,
-        education_level: formData.education_level,
+        education_level: formData.education_level ? sanitizeInput(formData.education_level) : null,
       });
 
       if (error) throw error;
+      
+      showSuccess('تم إضافة الطفل بنجاح');
       onSuccess();
     } catch (error) {
       console.error('Error adding child:', error);
-      alert('فشل إضافة الطفل. الرجاء المحاولة مرة أخرى.');
+      showError('فشل إضافة الطفل. الرجاء المحاولة مرة أخرى.');
     } finally {
       setLoading(false);
     }

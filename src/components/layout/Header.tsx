@@ -1,7 +1,9 @@
-import { LogOut, Home, Users, BookOpen, Gamepad2, User, Shield, MessageCircle, Users2, Video, BarChart3, Film } from 'lucide-react';
+import { useState } from 'react';
+import { LogOut, Home, Users, BookOpen, Gamepad2, User, Shield, MessageCircle, Users2, Video, BarChart3, Film, Menu } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { signOut } from '../../lib/auth';
 import { NotificationsBell } from '../notifications/NotificationsBell';
+import { MobileMenu } from './MobileMenu';
 
 interface HeaderProps {
   currentView: string;
@@ -10,6 +12,7 @@ interface HeaderProps {
 
 export function Header({ currentView, onViewChange }: HeaderProps) {
   const { user } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -39,12 +42,20 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
   const availableNavItems = navItems.filter(item => item.roles.includes(user.role));
 
   return (
-    <header className="bg-white shadow-md border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8 space-x-reverse">
-            <h1 className="text-2xl font-bold text-teal-600">Cognicare</h1>
-            <nav className="hidden md:flex space-x-4 space-x-reverse">
+    <>
+      <header className="bg-white shadow-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="فتح القائمة"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <h1 className="text-2xl font-bold text-teal-600">Cognicare</h1>
+              <nav className="hidden md:flex space-x-4 space-x-reverse">
               {availableNavItems.map(({ id, icon: Icon, label }) => (
                 <button
                   key={id}
@@ -81,5 +92,12 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
         </div>
       </div>
     </header>
+    <MobileMenu
+      isOpen={mobileMenuOpen}
+      onClose={() => setMobileMenuOpen(false)}
+      currentView={currentView}
+      onViewChange={onViewChange}
+    />
+    </>
   );
 }

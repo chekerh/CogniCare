@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
+import { sanitizeInput } from '../../lib/validation';
 import { Send } from 'lucide-react';
 
 interface CreatePostProps {
@@ -9,6 +11,7 @@ interface CreatePostProps {
 
 export function CreatePost({ onPostCreated }: CreatePostProps) {
   const { user } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -16,11 +19,24 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
     e.preventDefault();
     if (!content.trim() || !user) return;
 
+    // Validation
+    if (content.trim().length < 3) {
+      showError('المنشور يجب أن يكون 3 أحرف على الأقل');
+      return;
+    }
+
+    if (content.trim().length > 5000) {
+      showError('المنشور طويل جداً (الحد الأقصى 5000 حرف)');
+      return;
+    }
+
     setLoading(true);
     try {
+      const sanitizedContent = sanitizeInput(content.trim());
+      
       const { error } = await supabase.from('posts').insert({
         author_id: user.id,
-        content: content.trim(),
+        content: sanitizedContent,
         media_urls: [],
         tags: [],
       });
@@ -28,10 +44,11 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
       if (error) throw error;
 
       setContent('');
+      showSuccess('تم نشر المنشور بنجاح');
       onPostCreated();
     } catch (error) {
       console.error('Error creating post:', error);
-      alert('فشل نشر المنشور. الرجاء المحاولة مرة أخرى.');
+      showError('فشل نشر المنشور. الرجاء المحاولة مرة أخرى.');
     } finally {
       setLoading(false);
     }

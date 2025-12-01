@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { signUp } from '../../lib/auth';
 import { UserPlus } from 'lucide-react';
 import { UserRole } from '../../lib/supabase';
+import { useToast } from '../../contexts/ToastContext';
+import { validateEmail, validatePassword, validateName, sanitizeInput } from '../../lib/validation';
 
 interface SignupFormProps {
   onSuccess: () => void;
@@ -9,6 +11,7 @@ interface SignupFormProps {
 }
 
 export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -24,13 +27,34 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
     e.preventDefault();
     setError('');
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('كلمتا المرور غير متطابقتين');
+    // Validation
+    const nameValidation = validateName(formData.full_name);
+    if (!nameValidation.valid) {
+      const errorMsg = nameValidation.error || 'الاسم غير صحيح';
+      setError(errorMsg);
+      showError(errorMsg);
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('يجب أن تكون كلمة المرور 6 أحرف على الأقل');
+    if (!validateEmail(formData.email)) {
+      const errorMsg = 'البريد الإلكتروني غير صحيح';
+      setError(errorMsg);
+      showError(errorMsg);
+      return;
+    }
+
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.valid) {
+      const errorMsg = passwordValidation.errors[0] || 'كلمة المرور غير صحيحة';
+      setError(errorMsg);
+      showError(errorMsg);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      const errorMsg = 'كلمتا المرور غير متطابقتين';
+      setError(errorMsg);
+      showError(errorMsg);
       return;
     }
 
@@ -38,14 +62,17 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
 
     try {
       await signUp(formData.email, formData.password, {
-        full_name: formData.full_name,
+        full_name: sanitizeInput(formData.full_name),
         role: formData.role,
-        location: formData.location,
+        location: formData.location ? sanitizeInput(formData.location) : undefined,
         language_preference: 'ar',
       });
+      showSuccess('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول');
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'فشل إنشاء الحساب');
+      const errorMsg = err instanceof Error ? err.message : 'فشل إنشاء الحساب';
+      setError(errorMsg);
+      showError(errorMsg);
     } finally {
       setLoading(false);
     }

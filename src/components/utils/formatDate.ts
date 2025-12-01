@@ -30,3 +30,14 @@ export function formatDistanceToNow(date: string): string {
   const diffInYears = Math.floor(diffInMonths / 12);
   return `منذ ${diffInYears} سنة`;
 }
+
+export function formatDate(date: string): string {
+  const d = new Date(date);
+  return d.toLocaleDateString('ar-TN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}

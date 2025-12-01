@@ -27,9 +27,9 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
       return;
     }
 
-    if (password.length < 6) {
-      setError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-      showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    if (password.length < 8) {
+      setError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+      showError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
       return;
     }
 
@@ -49,15 +49,15 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+    <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-8" role="main" aria-labelledby="login-title">
       <div className="flex items-center justify-center mb-6">
-        <LogIn className="w-8 h-8 text-teal-600 mr-2" />
-        <h2 className="text-2xl font-bold text-gray-800">تسجيل الدخول</h2>
+        <LogIn className="w-8 h-8 text-teal-600 mr-2" aria-hidden="true" />
+        <h2 id="login-title" className="text-2xl font-bold text-gray-800">تسجيل الدخول</h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" aria-label="نموذج تسجيل الدخول" noValidate>
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm" role="alert" aria-live="assertive">
             {error}
           </div>
         )}
@@ -95,7 +95,8 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
+          className="w-full bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
+          aria-label={loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
         >
           {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
         </button>
@@ -106,7 +107,8 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
           ليس لديك حساب؟{' '}
           <button
             onClick={onSwitchToSignup}
-            className="text-teal-600 hover:text-teal-700 font-medium"
+            className="text-teal-600 hover:text-teal-700 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 rounded"
+            aria-label="الانتقال إلى صفحة إنشاء حساب جديد"
           >
             إنشاء حساب جديد
           </button>

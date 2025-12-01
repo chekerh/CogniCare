@@ -50,3 +50,7 @@ export function ListSkeleton({ count = 3 }: { count?: number }) {
   );
 }
 
+export function LoadingSkeleton() {
+  return <CardSkeleton />;
+}
+

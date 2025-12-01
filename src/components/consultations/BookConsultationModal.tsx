@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, User, Child, Specialist } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { X, Calendar, Clock } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface BookConsultationModalProps {
   onClose: () => void;

@@ -190,31 +190,43 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="chat-title"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl h-[80vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3 space-x-reverse">
-            <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center" aria-hidden="true">
               <span className="text-teal-700 font-bold">
                 {conversation.otherUser.full_name[0]}
               </span>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{conversation.otherUser.full_name}</h3>
+              <h3 id="chat-title" className="font-semibold text-gray-900">{conversation.otherUser.full_name}</h3>
               <p className="text-xs text-gray-500">متصل</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+            aria-label="إغلاق النافذة"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div 
+          className="flex-1 overflow-y-auto p-4 space-y-4"
+          role="log"
+          aria-live="polite"
+          aria-label="الرسائل"
+        >
           {messages.map((message) => (
             <div
               key={message.id}
@@ -242,9 +254,13 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200" role="region" aria-label="إدخال الرسالة">
           <div className="flex items-center space-x-2 space-x-reverse">
+            <label htmlFor="message-input" className="sr-only">
+              اكتب رسالة
+            </label>
             <input
+              id="message-input"
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
@@ -252,13 +268,16 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
               placeholder="اكتب رسالة..."
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               dir="rtl"
+              aria-label="اكتب رسالة"
+              aria-required="true"
             />
             <button
               onClick={sendMessage}
               disabled={sending || !newMessage.trim()}
-              className="bg-teal-600 text-white p-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-teal-600 text-white p-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-teal-500"
+              aria-label={sending ? 'جاري الإرسال...' : 'إرسال الرسالة'}
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </div>

@@ -51,22 +51,30 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
                 onClick={() => setMobileMenuOpen(true)}
                 className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                 aria-label="فتح القائمة"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <h1 className="text-2xl font-bold text-teal-600">Cognicare</h1>
-              <nav className="hidden md:flex space-x-4 space-x-reverse">
+              <h1 className="text-2xl font-bold text-teal-600">
+                <a href="#feed" onClick={(e) => { e.preventDefault(); onViewChange('feed'); }} className="focus:outline-none focus:ring-2 focus:ring-teal-500 rounded">
+                  Cognicare
+                </a>
+              </h1>
+              <nav className="hidden md:flex space-x-4 space-x-reverse" role="navigation" aria-label="القائمة الرئيسية">
               {availableNavItems.map(({ id, icon: Icon, label }) => (
                 <button
                   key={id}
                   onClick={() => onViewChange(id)}
-                  className={`flex items-center space-x-2 space-x-reverse px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center space-x-2 space-x-reverse px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 ${
                     currentView === id
                       ? 'bg-teal-100 text-teal-700'
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
+                  aria-current={currentView === id ? 'page' : undefined}
+                  aria-label={label}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" aria-hidden="true" />
                   <span>{label}</span>
                 </button>
               ))}
@@ -83,10 +91,11 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
             </div>
             <button
               onClick={handleSignOut}
-              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
               title="تسجيل الخروج"
+              aria-label="تسجيل الخروج"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </div>

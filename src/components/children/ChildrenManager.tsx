@@ -9,7 +9,7 @@ interface ChildrenManagerProps {
   onSelectChild?: (child: Child) => void;
 }
 
-export function ChildrenManager({ onSelectChild }: ChildrenManagerProps = {}) {
+export function ChildrenManager({ onSelectChild }: ChildrenManagerProps) {
   const { user } = useAuth();
   const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,7 +99,7 @@ export function ChildrenManager({ onSelectChild }: ChildrenManagerProps = {}) {
             <ChildCard
               key={child.id}
               child={child}
-              onSelect={onSelectChild || (() => {})}
+              onSelect={() => onSelectChild?.(child)}
               onUpdate={loadChildren}
             />
           ))

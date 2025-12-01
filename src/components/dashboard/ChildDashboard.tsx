@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase, Child, GameSession, AIReport } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Trophy, TrendingUp, Calendar, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
@@ -13,7 +12,6 @@ interface ChildDashboardProps {
 const COLORS = ['#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
-  const { user } = useAuth();
   const [sessions, setSessions] = useState<GameSession[]>([]);
   const [reports, setReports] = useState<AIReport[]>([]);
   const [loading, setLoading] = useState(true);

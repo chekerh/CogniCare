@@ -22,6 +22,7 @@ export interface User {
   location: string | null;
   language_preference: 'ar' | 'fr' | 'en';
   is_verified: boolean;
+  is_suspended?: boolean;
   verification_documents: string | null;
   created_at: string;
   updated_at: string;

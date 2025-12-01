@@ -1,8 +1,6 @@
-import { Home, Search } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Home } from 'lucide-react';
 
 export function NotFound() {
-  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 flex items-center justify-center p-4">

@@ -55,23 +55,31 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <form onSubmit={handleSubmit}>
+    <div className="bg-white rounded-lg shadow-md p-4" role="region" aria-label="إنشاء منشور جديد">
+      <form onSubmit={handleSubmit} aria-label="نموذج إنشاء منشور">
+        <label htmlFor="post-content" className="sr-only">
+          محتوى المنشور
+        </label>
         <textarea
+          id="post-content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="شارك تجربتك أو اطرح سؤالاً..."
           className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           rows={3}
           dir="auto"
+          aria-label="محتوى المنشور"
+          aria-required="true"
+          aria-invalid={content.trim().length > 0 && content.trim().length < 3}
         />
         <div className="mt-3 flex justify-end">
           <button
             type="submit"
             disabled={!content.trim() || loading}
-            className="flex items-center space-x-2 space-x-reverse bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center space-x-2 space-x-reverse bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500"
+            aria-label={loading ? 'جاري النشر...' : 'نشر المنشور'}
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4" aria-hidden="true" />
             <span>{loading ? 'جاري النشر...' : 'نشر'}</span>
           </button>
         </div>

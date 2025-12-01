@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, User } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { Users, Shield, Flag, BarChart3, CheckCircle, XCircle, Ban } from 'lucide-react';
+import { Users, Shield, Flag, BarChart3, CheckCircle, Ban } from 'lucide-react';
 
 export function AdminPanel() {
   const { user } = useAuth();
@@ -71,7 +71,7 @@ export function AdminPanel() {
     }
   };
 
-  const resolveFlag = async (flagId: string, action: string) => {
+  const resolveFlag = async (flagId: string, _action: string) => {
     try {
       await supabase
         .from('content_flags')

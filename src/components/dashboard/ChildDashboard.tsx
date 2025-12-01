@@ -7,11 +7,12 @@ import jsPDF from 'jspdf';
 
 interface ChildDashboardProps {
   child: Child;
+  onBack?: () => void;
 }
 
 const COLORS = ['#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'];
 
-export function ChildDashboard({ child }: ChildDashboardProps) {
+export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
   const { user } = useAuth();
   const [sessions, setSessions] = useState<GameSession[]>([]);
   const [reports, setReports] = useState<AIReport[]>([]);
@@ -160,6 +161,14 @@ export function ChildDashboard({ child }: ChildDashboardProps) {
       <div className="bg-white rounded-2xl shadow-lg p-6">
         <div className="flex items-center justify-between">
           <div>
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="mb-4 text-teal-600 hover:text-teal-700 text-sm"
+              >
+                ← العودة
+              </button>
+            )}
             <h2 className="text-3xl font-bold text-gray-900 mb-2">لوحة تقدم {child.name}</h2>
             <p className="text-gray-600">
               {sessions.length} جلسة • {reports.length} تقرير AI

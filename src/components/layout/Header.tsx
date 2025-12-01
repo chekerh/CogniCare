@@ -1,6 +1,7 @@
-import { LogOut, Home, Users, BookOpen, Gamepad2, User, Shield } from 'lucide-react';
+import { LogOut, Home, Users, BookOpen, Gamepad2, User, Shield, MessageCircle, Users2, Video, BarChart3, Film } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { signOut } from '../../lib/auth';
+import { NotificationsBell } from '../notifications/NotificationsBell';
 
 interface HeaderProps {
   currentView: string;
@@ -24,8 +25,13 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
   const navItems = [
     { id: 'feed', icon: Home, label: 'الصفحة الرئيسية', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
     { id: 'directory', icon: Users, label: 'دليل الأخصائيين', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
+    { id: 'messages', icon: MessageCircle, label: 'الرسائل', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
+    { id: 'groups', icon: Users2, label: 'المجموعات', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
+    { id: 'reels', icon: Film, label: 'المقاطع', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
     { id: 'children', icon: BookOpen, label: 'أطفالي', roles: ['mother'] },
     { id: 'games', icon: Gamepad2, label: 'منطقة الألعاب', roles: ['mother'] },
+    { id: 'dashboard', icon: BarChart3, label: 'لوحات التقدم', roles: ['mother'] },
+    { id: 'consultations', icon: Video, label: 'الاستشارات', roles: ['mother', 'specialist'] },
     { id: 'profile', icon: User, label: 'الملف الشخصي', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
     { id: 'admin', icon: Shield, label: 'لوحة الإدارة', roles: ['admin'] },
   ];
@@ -57,6 +63,7 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
           </div>
 
           <div className="flex items-center space-x-4 space-x-reverse">
+            <NotificationsBell />
             <div className="text-right">
               <p className="text-sm font-medium text-gray-900">{user.display_name || user.full_name}</p>
               <p className="text-xs text-gray-500">

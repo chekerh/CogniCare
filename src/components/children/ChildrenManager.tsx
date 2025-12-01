@@ -5,7 +5,11 @@ import { Plus, User, BookOpen } from 'lucide-react';
 import { AddChildForm } from './AddChildForm';
 import { ChildCard } from './ChildCard';
 
-export function ChildrenManager() {
+interface ChildrenManagerProps {
+  onSelectChild?: (child: Child) => void;
+}
+
+export function ChildrenManager({ onSelectChild }: ChildrenManagerProps = {}) {
   const { user } = useAuth();
   const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
@@ -95,7 +99,7 @@ export function ChildrenManager() {
             <ChildCard
               key={child.id}
               child={child}
-              onSelect={() => {}}
+              onSelect={onSelectChild || (() => {})}
               onUpdate={loadChildren}
             />
           ))

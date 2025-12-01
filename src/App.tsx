@@ -7,12 +7,20 @@ import { CommunityFeed } from './components/feed/CommunityFeed';
 import { SpecialistDirectory } from './components/directory/SpecialistDirectory';
 import { ChildrenManager } from './components/children/ChildrenManager';
 import { GamesZone } from './components/games/GamesZone';
+import { Inbox } from './components/messaging/Inbox';
+import { GroupsManager } from './components/groups/GroupsManager';
+import { ReelsFeed } from './components/reels/ReelsFeed';
+import { ChildDashboard } from './components/dashboard/ChildDashboard';
+import { Child } from './lib/supabase';
+import { ConsultationsManager } from './components/consultations/ConsultationsManager';
+import { AdminPanel } from './components/admin/AdminPanel';
 import { Heart } from 'lucide-react';
 
 function AppContent() {
   const { user, loading } = useAuth();
   const [authView, setAuthView] = useState<'login' | 'signup'>('login');
   const [currentView, setCurrentView] = useState('feed');
+  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
 
   if (loading) {
     return (
@@ -72,8 +80,23 @@ function AppContent() {
         {currentView === 'directory' && <SpecialistDirectory />}
         {currentView === 'children' && <ChildrenManager />}
         {currentView === 'games' && <GamesZone />}
+        {currentView === 'messages' && <Inbox />}
+        {currentView === 'groups' && <GroupsManager />}
+        {currentView === 'reels' && <ReelsFeed />}
+        {currentView === 'dashboard' && user.role === 'mother' && (
+          selectedChild ? (
+            <ChildDashboard child={selectedChild} onBack={() => setSelectedChild(null)} />
+          ) : (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">لوحات التقدم</h2>
+              <p className="text-gray-600 mb-4">اختر طفلاً لعرض لوحة التقدم</p>
+              <ChildrenManager onSelectChild={setSelectedChild} />
+            </div>
+          )
+        )}
+        {currentView === 'consultations' && <ConsultationsManager />}
         {currentView === 'profile' && (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">الملف الشخصي</h2>
             <div className="space-y-3 text-right max-w-md mx-auto">
               <div>
@@ -99,12 +122,7 @@ function AppContent() {
             </div>
           </div>
         )}
-        {currentView === 'admin' && user.role === 'admin' && (
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">لوحة الإدارة</h2>
-            <p className="text-gray-600">إدارة المستخدمين والمحتوى</p>
-          </div>
-        )}
+        {currentView === 'admin' && user.role === 'admin' && <AdminPanel />}
       </main>
     </div>
   );

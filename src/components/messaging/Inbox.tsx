@@ -3,12 +3,25 @@ import { supabase, Conversation, User } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { MessageCircle, Search, Plus } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
+import { ChatWindow } from './ChatWindow';
+import { GenerateKeysModal } from './GenerateKeysModal';
+import { getPrivateKey } from '../../lib/encryption';
 
 export function Inbox() {
   const { user } = useAuth();
   const [conversations, setConversations] = useState<(Conversation & { otherUser: User; unreadCount: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedConversation, setSelectedConversation] = useState<(Conversation & { otherUser: User }) | null>(null);
+  const [showNewMessage, setShowNewMessage] = useState(false);
+  const [showKeysModal, setShowKeysModal] = useState(false);
+
+  useEffect(() => {
+    // Check if user has encryption keys
+    if (user && !getPrivateKey(user.id)) {
+      // Don't auto-show, but provide option
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -101,6 +114,18 @@ export function Inbox() {
     );
   }
 
+  if (selectedConversation) {
+    return (
+      <ChatWindow
+        conversation={selectedConversation}
+        onClose={() => {
+          setSelectedConversation(null);
+          loadConversations();
+        }}
+      />
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
@@ -109,10 +134,24 @@ export function Inbox() {
             <MessageCircle className="w-6 h-6 text-teal-600" />
             <span>الرسائل</span>
           </h2>
-          <button className="flex items-center space-x-2 space-x-reverse bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
-            <Plus className="w-5 h-5" />
-            <span>رسالة جديدة</span>
-          </button>
+          <div className="flex items-center space-x-2 space-x-reverse">
+            {!getPrivateKey(user!.id) && (
+              <button
+                onClick={() => setShowKeysModal(true)}
+                className="px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm"
+                title="إعداد التشفير"
+              >
+                🔒 إعداد التشفير
+              </button>
+            )}
+            <button
+              onClick={() => setShowNewMessage(true)}
+              className="flex items-center space-x-2 space-x-reverse bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              <span>رسالة جديدة</span>
+            </button>
+          </div>
         </div>
 
         <div className="relative">
@@ -138,6 +177,7 @@ export function Inbox() {
           filteredConversations.map((conv) => (
             <div
               key={conv.id}
+              onClick={() => setSelectedConversation(conv)}
               className="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition-all cursor-pointer"
             >
               <div className="flex items-center space-x-4 space-x-reverse">
@@ -169,7 +209,13 @@ export function Inbox() {
           ))
         )}
       </div>
+
+      {showKeysModal && (
+        <GenerateKeysModal
+          onClose={() => setShowKeysModal(false)}
+          onSuccess={() => setShowKeysModal(false)}
+        />
+      )}
     </div>
   );
 }
-

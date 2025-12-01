@@ -1,225 +1,393 @@
-# Cognicare - منصة دعم شاملة للأطفال ذوي الاحتياجات الخاصة
+# 🧠 Cognicare - منصة دعم شاملة للأطفال ذوي الاحتياجات الخاصة
 
-![Cognicare](https://via.placeholder.com/1200x400/14b8a6/ffffff?text=Cognicare)
+<div align="center">
 
-## نظرة عامة
+![Cognicare](https://img.shields.io/badge/Cognicare-Platform-14b8a6?style=for-the-badge&logo=heart&logoColor=white)
+![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 
-Cognicare هي منصة ويب شاملة مصممة خصيصاً لدعم أمهات الأطفال ذوي الاحتياجات الخاصة في تونس. تجمع المنصة بين شبكة اجتماعية آمنة، دعم متخصصين، خطط رعاية مخصصة، وتحليل سلوك الأطفال بمساعدة الذكاء الاصطناعي.
+**A comprehensive support platform for mothers of children with special needs in Tunisia**
 
-## المميزات الأساسية
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Deployment](#-deployment) • [Contributing](#-contributing)
 
-### 1. مجتمع آمن ومُراقب 🤝
-- منشورات ومشاركات بين الأمهات
-- تعليقات وتفاعلات داعمة
-- نظام إبلاغ عن المحتوى غير المناسب
-- بيئة خاصة ومشفرة
+[English](#-cognicare) | [العربية](#-cognicare---منصة-دعم-شاملة-للأطفال-ذوي-الاحتياجات-الخاصة)
 
-### 2. دليل الأخصائيين والمتطوعين 👨‍⚕️
-- بحث عن أخصائيين موثقين
-- معلومات تفصيلية عن التخصصات
-- طلب استشارات مباشرة
-- تقييمات ومراجعات
-
-### 3. إدارة ملفات الأطفال 👶
-- إضافة معلومات تفصيلية عن كل طفل
-- تتبع التطور والتقدم
-- تخزين آمن للبيانات الحساسة
-- ربط مع الأخصائيين المعالجين
-
-### 4. منطقة الألعاب التفاعلية 🎮
-- ألعاب تعليمية مصممة خصيصاً
-- لعبة الذاكرة لتحسين التركيز
-- تتبع الأداء والنتائج
-- بيئة آمنة وممتعة للأطفال
-
-### 5. تحليل السلوك بالذكاء الاصطناعي 🤖
-- تتبع جلسات اللعب
-- تحليل مستوى الانخراط
-- تقارير مفصلة عن الأداء
-- توصيات مخصصة
-
-## التقنيات المستخدمة
-
-### Frontend
-- **React 18** - مكتبة واجهة المستخدم
-- **TypeScript** - لكتابة كود آمن ومُوثق
-- **Vite** - أداة البناء السريعة
-- **Tailwind CSS** - تصميم متجاوب وجميل
-- **Lucide React** - أيقونات عصرية
-
-### Backend & Database
-- **Supabase** - قاعدة بيانات PostgreSQL مُدارة
-- **Row Level Security (RLS)** - حماية البيانات على مستوى الصفوف
-- **Real-time Subscriptions** - تحديثات فورية
-
-### الأمان والخصوصية
-- **مصادقة JWT** - نظام تسجيل دخول آمن
-- **RBAC** - التحكم في الوصول حسب الدور
-- **تشفير البيانات** - حماية المعلومات الحساسة
-- **سياسات RLS صارمة** - أمان على مستوى قاعدة البيانات
-
-## البنية التحتية لقاعدة البيانات
-
-### الجداول الرئيسية
-
-#### `users` - المستخدمون
-- معلومات المستخدمين الأساسية
-- الأدوار: أم، أخصائي، متطوع، مدير
-- حالة التوثيق والتحقق
-
-#### `children` - الأطفال
-- ملفات الأطفال المرتبطة بالأمهات
-- معلومات التشخيص والعمر
-- المستوى التعليمي
-
-#### `posts` & `comments` - المنشورات والتعليقات
-- محتوى المجتمع
-- نظام التفاعلات والردود
-- إمكانية الإبلاغ والإشراف
-
-#### `specialists` - الأخصائيون
-- معلومات مفصلة عن الأخصائيين
-- التخصصات والمؤهلات
-- حالة التوثيق
-
-#### `game_sessions` - جلسات الألعاب
-- سجل جميع جلسات اللعب
-- النتائج والمقاييس
-- مدة الجلسة والدقة
-
-#### `ai_reports` - تقارير الذكاء الاصطناعي
-- تحليلات السلوك
-- مقاييس الانخراط
-- إمكانية المشاركة مع الأخصائيين
-
-## كيفية التشغيل
-
-### المتطلبات
-- Node.js 18+
-- npm أو yarn
-- حساب Supabase (مجاني)
-
-### الإعداد السريع
-
-1. **استنساخ المشروع**
-```bash
-git clone <repository-url>
-cd cognicare
-```
-
-2. **تثبيت الحزم**
-```bash
-npm install
-```
-
-3. **إعداد المتغيرات البيئية**
-```bash
-cp .env.example .env
-# Edit .env with your Supabase credentials
-```
-
-4. **إعداد قاعدة البيانات**
-📖 **راجع [DATABASE_SETUP.md](./DATABASE_SETUP.md) للتعليمات التفصيلية**
-
-5. **تشغيل الخادم التطويري**
-```bash
-npm run dev
-```
-
-### الوثائق الكاملة
-
-- 📖 **[SETUP.md](./SETUP.md)** - دليل الإعداد الكامل
-- 📖 **[DATABASE_SETUP.md](./DATABASE_SETUP.md)** - إعداد قاعدة البيانات خطوة بخطوة
-- 📖 **[DEPLOYMENT.md](./DEPLOYMENT.md)** - نشر التطبيق للإنتاج
-- 📖 **[CONTRIBUTING.md](./CONTRIBUTING.md)** - دليل المساهمة
-
-## بيانات التجربة
-
-تم إضافة بيانات تجريبية للتسهيل على المختبرين:
-
-### حسابات تجريبية
-- **أم**: mother@demo.com
-- **أخصائي**: specialist@demo.com
-- **متطوع**: volunteer@demo.com
-
-### محتوى تجريبي
-- منشورات مجتمعية بالعربية
-- ملف طفل تجريبي (يوسف، 5 سنوات)
-- أخصائي موثق مع معلومات كاملة
-- جلسة لعب مسجلة
-
-## الميزات المستقبلية
-
-### المرحلة الثانية
-- [ ] رسائل خاصة مباشرة بين المستخدمين
-- [ ] نظام حجز المواعيد مع الأخصائيين
-- [ ] خطط التغذية المخصصة
-- [ ] برامج التدريب والأنشطة
-
-### المرحلة الثالثة
-- [ ] تحليل الفيديو بالذكاء الاصطناعي
-- [ ] كشف المشاعر من تعابير الوجه
-- [ ] تتبع حركة العين
-- [ ] تقارير تطور شاملة
-
-### المرحلة الرابعة
-- [ ] تطبيق موبايل (React Native)
-- [ ] إشعارات فورية (Push Notifications)
-- [ ] مكالمات فيديو مباشرة
-- [ ] مكتبة موارد تعليمية
-
-## الدعم اللغوي
-
-المنصة تدعم حالياً:
-- **العربية** (اللغة الأساسية) - مع دعم كامل لـ RTL
-- **الفرنسية** (ثانوية)
-- **الإنجليزية** (للتوثيق التقني)
-
-## الأمان والامتثال
-
-### حماية البيانات
-- تشفير جميع الاتصالات (HTTPS)
-- تشفير البيانات الحساسة في قاعدة البيانات
-- عدم حفظ فيديوهات أو صور خام للأطفال
-- سياسة احتفاظ بالبيانات واضحة
-
-### الخصوصية
-- موافقة صريحة قبل جمع أي بيانات
-- حق الوصول والحذف للمستخدمين
-- شفافية كاملة في استخدام البيانات
-- التزام بمبادئ GDPR
-
-### سجل التدقيق
-- تسجيل جميع الإجراءات الإدارية
-- إمكانية تتبع التغييرات
-- المساءلة والشفافية
-
-## المساهمة
-
-نرحب بالمساهمات من المطورين والمتخصصين في المجال الصحي:
-
-1. Fork المشروع
-2. إنشاء branch للميزة الجديدة
-3. Commit التغييرات
-4. Push إلى Branch
-5. فتح Pull Request
-
-## الترخيص
-
-هذا المشروع مفتوح المصدر ومتاح للاستخدام التعليمي والخيري.
-
-## الاتصال والدعم
-
-للأسئلة والدعم الفني:
-- البريد الإلكتروني: support@cognicare.tn
-- الموقع: www.cognicare.tn
-
-## شكر خاص
-
-- لجميع الأمهات اللواتي ألهمننا بقصصهن
-- للأخصائيين الذين قدموا خبراتهم
-- لمجتمع المطورين الذين ساهموا في الأدوات مفتوحة المصدر
+</div>
 
 ---
 
-**صُنع بـ ❤️ لدعم الأطفال ذوي الاحتياجات الخاصة وعائلاتهم**
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [Database Setup](#-database-setup)
+- [Development](#-development)
+- [Deployment](#-deployment)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Support](#-support)
+
+---
+
+## 🎯 Overview
+
+Cognicare is a comprehensive web platform designed specifically to support mothers of children with special needs in Tunisia. The platform combines a secure social network, specialist support, personalized care plans, and AI-assisted behavioral analysis.
+
+### Key Highlights
+
+- 🔒 **Secure & Private** - End-to-end encrypted messaging, RLS policies
+- 🤖 **AI-Powered** - Behavioral analysis with emotion recognition
+- 👥 **Community-Driven** - Groups, feed, and specialist directory
+- 📊 **Data-Driven** - Progress dashboards with detailed analytics
+- 🌍 **Trilingual** - Full support for Arabic (RTL), French, and English
+
+---
+
+## ✨ Features
+
+### Phase 1 (Core Features)
+- ✅ **User Authentication** - Secure login/signup with role-based access
+- ✅ **Children Profiles** - Manage multiple child profiles with detailed information
+- ✅ **Community Feed** - Posts, comments, and reactions
+- ✅ **Specialist Directory** - Search and connect with verified specialists
+- ✅ **Games Zone** - Interactive memory games with performance tracking
+- ✅ **AI Reports** - Behavioral analysis and engagement metrics
+
+### Phase 2 (Advanced Features)
+- ✅ **Private Messaging** - End-to-end encrypted WhatsApp-like messaging
+- ✅ **Community Groups** - Create and join groups, group posts and discussions
+- ✅ **Reels/Short Videos** - Instagram-style vertical video feed
+- ✅ **Progress Dashboards** - Detailed charts and analytics for each child
+- ✅ **Video Consultations** - Book and conduct video calls with specialists
+- ✅ **Push Notifications** - Real-time notifications for all activities
+- ✅ **Enhanced Admin Panel** - Comprehensive admin tools and moderation
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+- **React 18** - UI library with hooks
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool and dev server
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide React** - Modern icon library
+- **Recharts** - Beautiful charts and graphs
+
+### Backend & Database
+- **Supabase** - PostgreSQL database with:
+  - Authentication (JWT)
+  - Row Level Security (RLS)
+  - Real-time subscriptions
+  - Storage for videos/images
+  - Edge Functions
+
+### AI & ML
+- **FastAPI** - Python API server for AI analysis
+- **OpenCV** - Image/video processing
+- **Emotion Recognition** - Facial emotion detection
+- **Speech Analysis** - Audio emotion recognition
+
+### Security
+- **libsodium** - End-to-end encryption
+- **JWT** - Secure authentication
+- **RLS Policies** - Database-level security
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+ ([Download](https://nodejs.org/))
+- npm or yarn
+- Supabase account ([Sign up free](https://supabase.com))
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/chekerh/CogniCare.git
+cd cognicare
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your Supabase credentials
+
+# Set up database (see DATABASE_SETUP.md)
+# Run migrations in Supabase SQL Editor
+
+# Start development server
+npm run dev
+```
+
+Visit `http://localhost:5173` 🎉
+
+**📖 For detailed setup instructions, see [SETUP.md](./SETUP.md) or [QUICK_START.md](./QUICK_START.md)**
+
+---
+
+## 📁 Project Structure
+
+```
+cognicare/
+├── src/
+│   ├── components/          # React components
+│   │   ├── auth/           # Authentication forms
+│   │   ├── children/        # Child management
+│   │   ├── dashboard/      # Progress dashboards
+│   │   ├── directory/       # Specialist directory
+│   │   ├── feed/            # Community feed
+│   │   ├── games/           # Games zone
+│   │   ├── groups/          # Community groups
+│   │   ├── layout/          # Layout components
+│   │   ├── messaging/       # Private messaging
+│   │   └── reels/           # Short videos
+│   ├── contexts/           # React contexts
+│   ├── lib/                 # Utilities & services
+│   │   ├── ai.ts           # AI integration
+│   │   ├── auth.ts         # Authentication
+│   │   ├── encryption.ts   # E2E encryption
+│   │   └── supabase.ts     # Supabase client
+│   └── main.tsx            # Entry point
+├── supabase/
+│   └── migrations/         # Database migrations
+├── ai/
+│   └── server/             # FastAPI AI server
+├── scripts/                # Utility scripts
+└── docs/                   # Documentation
+```
+
+---
+
+## 🗄 Database Setup
+
+Cognicare uses Supabase (PostgreSQL) with comprehensive Row Level Security.
+
+### Quick Setup
+
+1. **Create Supabase Project**
+   - Go to [app.supabase.com](https://app.supabase.com)
+   - Create new project
+   - Save your credentials
+
+2. **Run Migrations**
+   - Go to SQL Editor in Supabase
+   - Run migrations in order:
+     - `20251008133549_create_core_schema.sql`
+     - `20251008134158_add_demo_data.sql` (optional)
+     - `20250102000000_phase2_schema.sql`
+
+3. **Create Storage Buckets**
+   - `reels` (public, 100MB)
+   - `avatars` (public, 5MB)
+   - `group-covers` (public, 10MB)
+
+**📖 Complete guide: [DATABASE_SETUP.md](./DATABASE_SETUP.md)**
+
+---
+
+## 💻 Development
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev          # Start dev server (port 5173)
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+npm run typecheck    # TypeScript type checking
+
+# AI Server (optional)
+npm run ai:setup     # Setup Kaggle credentials
+npm run ai:train     # Train AI models
+npm run ai:serve     # Start AI server (port 8000)
+```
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_AI_SERVER_URL=http://localhost:8000
+```
+
+---
+
+## 🚢 Deployment
+
+### Recommended Stack
+
+- **Frontend**: [Vercel](https://vercel.com) (recommended) or Netlify
+- **AI Server**: [Railway](https://railway.app) or Render
+- **Database**: Supabase (already cloud-hosted)
+
+### Quick Deploy
+
+#### Frontend (Vercel)
+
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+#### AI Server (Railway)
+
+```bash
+npm i -g @railway/cli
+cd ai/server
+railway init
+railway up
+```
+
+**📖 Complete deployment guide: [DEPLOYMENT.md](./DEPLOYMENT.md)**
+
+---
+
+## 📚 Documentation
+
+Comprehensive documentation is available:
+
+- **[SETUP.md](./SETUP.md)** - Complete setup guide
+- **[DATABASE_SETUP.md](./DATABASE_SETUP.md)** - Database setup step-by-step
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment guide
+- **[QUICK_START.md](./QUICK_START.md)** - 5-minute quick start
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
+- **[GITHUB_SETUP.md](./GITHUB_SETUP.md)** - GitHub repository setup
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+### How to Contribute
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Style
+
+- Use TypeScript for all new code
+- Follow existing code patterns
+- Add comments for complex logic
+- Write meaningful commit messages
+- Test your changes thoroughly
+
+---
+
+## 📊 Database Schema
+
+### Core Tables
+- `users` - User accounts and profiles
+- `children` - Child profiles
+- `posts` - Community feed posts
+- `comments` - Post comments
+- `reactions` - Post reactions
+- `specialists` - Specialist profiles
+- `game_sessions` - Game play sessions
+- `ai_reports` - AI analysis reports
+
+### Phase 2 Tables
+- `conversations` - Private messaging conversations
+- `messages` - Encrypted messages
+- `groups` - Community groups
+- `group_posts` - Group posts
+- `reels` - Short videos
+- `consultations` - Video consultations
+- `notifications` - Push notifications
+
+All tables have Row Level Security (RLS) enabled for data protection.
+
+---
+
+## 🔒 Security
+
+- **End-to-End Encryption** - Private messages encrypted with libsodium
+- **Row Level Security** - Database-level access control
+- **JWT Authentication** - Secure token-based auth
+- **Environment Variables** - All secrets in `.env` (never committed)
+- **HTTPS Only** - All production deployments use HTTPS
+- **Input Validation** - Client and server-side validation
+
+---
+
+## 🌍 Internationalization
+
+Cognicare supports three languages:
+
+- **Arabic** (العربية) - Primary language with RTL support
+- **French** (Français) - Secondary language
+- **English** - For technical documentation
+
+---
+
+## 📈 Roadmap
+
+### Phase 3 (Planned)
+- [ ] Mobile app (React Native)
+- [ ] Advanced video analysis
+- [ ] Eye tracking integration
+- [ ] Comprehensive training programs
+- [ ] Nutrition planning system
+
+### Phase 4 (Future)
+- [ ] Multi-language expansion
+- [ ] International deployment
+- [ ] Advanced AI models
+- [ ] Integration with health systems
+
+---
+
+## 📝 License
+
+This project is open source and available for educational and charitable use.
+
+---
+
+## 💬 Support
+
+- **Documentation**: Check the docs in this repository
+- **Issues**: [GitHub Issues](https://github.com/chekerh/CogniCare/issues)
+- **Email**: support@cognicare.tn
+- **Website**: www.cognicare.tn
+
+---
+
+## 🙏 Acknowledgments
+
+- All mothers who inspired us with their stories
+- Specialists who provided their expertise
+- Open source community for amazing tools
+- Supabase team for excellent platform
+
+---
+
+## ⭐ Star History
+
+If you find this project helpful, please consider giving it a star ⭐
+
+---
+
+<div align="center">
+
+**Made with ❤️ for supporting children with special needs and their families**
+
+[⬆ Back to Top](#-cognicare---منصة-دعم-شاملة-للأطفال-ذوي-الاحتياجات-الخاصة)
+
+</div>

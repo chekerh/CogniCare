@@ -10,7 +10,6 @@ export function ChildrenManager() {
   const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
 
   useEffect(() => {
     if (user?.role === 'mother') {
@@ -96,7 +95,7 @@ export function ChildrenManager() {
             <ChildCard
               key={child.id}
               child={child}
-              onSelect={() => setSelectedChild(child)}
+              onSelect={() => {}}
               onUpdate={loadChildren}
             />
           ))

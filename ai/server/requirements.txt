@@ -6,3 +6,6 @@ numpy==1.24.3
 Pillow==10.1.0
 pydantic==2.5.0
 
+# ONNX Runtime for running trained models in production
+onnxruntime==1.18.0
+

@@ -13,16 +13,51 @@ import { analytics } from './lib/analytics';
 import { healthChecker } from './lib/healthCheck';
 
 // Lazy load heavy components for code splitting
-const CommunityFeed = lazy(() => import('./components/feed/CommunityFeed').then(m => ({ default: m.CommunityFeed })));
-const SpecialistDirectory = lazy(() => import('./components/directory/SpecialistDirectory').then(m => ({ default: m.SpecialistDirectory })));
-const ChildrenManager = lazy(() => import('./components/children/ChildrenManager').then(m => ({ default: m.ChildrenManager })));
-const GamesZone = lazy(() => import('./components/games/GamesZone').then(m => ({ default: m.GamesZone })));
-const Inbox = lazy(() => import('./components/messaging/Inbox').then(m => ({ default: m.Inbox })));
-const GroupsManager = lazy(() => import('./components/groups/GroupsManager').then(m => ({ default: m.GroupsManager })));
-const ReelsFeed = lazy(() => import('./components/reels/ReelsFeed').then(m => ({ default: m.ReelsFeed })));
-const ChildDashboard = lazy(() => import('./components/dashboard/ChildDashboard').then(m => ({ default: m.ChildDashboard })));
-const ConsultationsManager = lazy(() => import('./components/consultations/ConsultationsManager').then(m => ({ default: m.ConsultationsManager })));
-const AdminPanel = lazy(() => import('./components/admin/AdminPanel').then(m => ({ default: m.AdminPanel })));
+const CommunityFeed = lazy(() =>
+  import('./components/feed/CommunityFeed').then((m) => ({ default: m.CommunityFeed })),
+);
+const SpecialistDirectory = lazy(() =>
+  import('./components/directory/SpecialistDirectory').then((m) => ({
+    default: m.SpecialistDirectory,
+  })),
+);
+const ChildrenManager = lazy(() =>
+  import('./components/children/ChildrenManager').then((m) => ({
+    default: m.ChildrenManager,
+  })),
+);
+const GamesZone = lazy(() =>
+  import('./components/games/GamesZone').then((m) => ({ default: m.GamesZone })),
+);
+const Inbox = lazy(() =>
+  import('./components/messaging/Inbox').then((m) => ({ default: m.Inbox })),
+);
+const GroupsManager = lazy(() =>
+  import('./components/groups/GroupsManager').then((m) => ({
+    default: m.GroupsManager,
+  })),
+);
+const ReelsFeed = lazy(() =>
+  import('./components/reels/ReelsFeed').then((m) => ({ default: m.ReelsFeed })),
+);
+const ChildDashboard = lazy(() =>
+  import('./components/dashboard/ChildDashboard').then((m) => ({
+    default: m.ChildDashboard,
+  })),
+);
+const ConsultationsManager = lazy(() =>
+  import('./components/consultations/ConsultationsManager').then((m) => ({
+    default: m.ConsultationsManager,
+  })),
+);
+const AdminPanel = lazy(() =>
+  import('./components/admin/AdminPanel').then((m) => ({ default: m.AdminPanel })),
+);
+const ParentChildStats = lazy(() =>
+  import('./components/children/ParentChildStats').then((m) => ({
+    default: m.ParentChildStats,
+  })),
+);
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -130,7 +165,11 @@ function AppContent() {
           )}
           {currentView === 'consultations' && <ConsultationsManager />}
           {currentView === 'profile' && (
-            <div className="bg-white rounded-2xl shadow-lg p-8 text-center" role="region" aria-label="الملف الشخصي">
+            <div
+              className="bg-white rounded-2xl shadow-lg p-8 text-center"
+              role="region"
+              aria-label="الملف الشخصي"
+            >
               <h2 className="text-2xl font-bold text-gray-800 mb-4">الملف الشخصي</h2>
               <div className="space-y-3 text-right max-w-md mx-auto">
                 <div>
@@ -144,7 +183,13 @@ function AppContent() {
                 <div>
                   <span className="font-medium text-gray-700">نوع الحساب:</span>
                   <span className="mr-2 text-gray-900">
-                    {user.role === 'mother' ? 'أم' : user.role === 'specialist' ? 'أخصائي' : user.role === 'volunteer' ? 'متطوع' : 'مدير'}
+                    {user.role === 'mother'
+                      ? 'أم'
+                      : user.role === 'specialist'
+                      ? 'أخصائي'
+                      : user.role === 'volunteer'
+                      ? 'متطوع'
+                      : 'مدير'}
                   </span>
                 </div>
                 {user.location && (
@@ -154,6 +199,12 @@ function AppContent() {
                   </div>
                 )}
               </div>
+
+              {user.role === 'mother' && (
+                <Suspense fallback={<LoadingSkeleton />}>
+                  <ParentChildStats />
+                </Suspense>
+              )}
             </div>
           )}
           {currentView === 'admin' && user.role === 'admin' && <AdminPanel />}

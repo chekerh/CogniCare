@@ -118,9 +118,12 @@ cd cognicare
 # Install dependencies
 npm install
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your Supabase credentials
+# Create .env file (copy & edit this template)
+cat > .env << 'EOF'
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_AI_SERVER_URL=http://localhost:8000
+EOF
 
 # Set up database (see DATABASE_SETUP.md)
 # Run migrations in Supabase SQL Editor

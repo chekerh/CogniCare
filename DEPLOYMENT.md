@@ -118,9 +118,9 @@ npm i -g wrangler
 
 ---
 
-## AI Server Deployment (FastAPI)
+## AI Server Deployment (FastAPI + ONNX)
 
-Your AI server needs Python hosting. Here are the best options:
+Your AI server needs Python hosting and access to your ONNX models. Here are the best options:
 
 ### Option 1: Railway ⭐ (Recommended)
 
@@ -167,6 +167,13 @@ services:
     envVars:
       - key: PORT
         value: 8000
+      # Add your model paths and labels as environment variables, for example:
+      # - key: EMOTION_MODEL_PATH
+      #   value: models/emotion_emotionnet.onnx
+      # - key: ATTENTION_MODEL_PATH
+      #   value: models/attention_gaze.onnx
+      # - key: SPEECH_MODEL_PATH
+      #   value: models/speech_ravdess.onnx
 ```
 
 ### Option 3: Fly.io

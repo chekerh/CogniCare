@@ -42,12 +42,12 @@ npm install
 
 ### 3. Set Up Environment Variables
 
-```bash
-# Copy the example environment file
-cp .env.example .env
+Create a `.env` file in the project root and add:
 
-# Edit .env with your credentials
-# See DATABASE_SETUP.md for detailed instructions
+```bash
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_AI_SERVER_URL=http://localhost:8000
 ```
 
 **Required variables:**

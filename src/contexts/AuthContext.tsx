@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '../lib/supabase';
+import { User, supabase } from '../lib/supabase';
 import { onAuthStateChange, getCurrentUser } from '../lib/auth';
 
 interface AuthContextType {
@@ -25,18 +25,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Initial user fetch
     getCurrentUser()
       .then(setUser)
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
 
+    // Listen for auth state changes
     const { data: { subscription } } = onAuthStateChange((user) => {
       setUser(user);
       setLoading(false);
     });
 
+    // Also listen to session changes directly
+    const { data: { subscription: sessionSub } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        // Refresh user after sign in
+        try {
+          const user = await getCurrentUser();
+          setUser(user);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error refreshing user after sign in:', error);
+          setLoading(false);
+        }
+      }
+    });
+
     return () => {
       subscription?.unsubscribe();
+      sessionSub?.unsubscribe();
     };
   }, []);
 

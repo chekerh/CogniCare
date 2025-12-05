@@ -12,7 +12,8 @@
     "ai:setup": "node scripts/setup-kaggle.js",
     "ai:train": "node scripts/train-models.js",
     "ai:serve": "cd ai/server && python -m uvicorn main:app --reload --port 8000",
-    "test": "node scripts/test-app.js"
+    "test": "node scripts/test-app.js",
+    "verify": "node scripts/verify-setup.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

@@ -36,14 +36,22 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
     setLoading(true);
 
     try {
-      await signIn(email, password);
-      showSuccess('تم تسجيل الدخول بنجاح');
-      onSuccess();
+      const result = await signIn(email, password);
+      if (result?.user) {
+        // Wait a bit for auth state to propagate
+        await new Promise(resolve => setTimeout(resolve, 500));
+        showSuccess('تم تسجيل الدخول بنجاح');
+        // Give time for AuthContext to update
+        setTimeout(() => {
+          onSuccess();
+        }, 300);
+      } else {
+        throw new Error('فشل تسجيل الدخول - لم يتم إنشاء جلسة');
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'فشل تسجيل الدخول';
       setError(errorMessage);
       showError(errorMessage);
-    } finally {
       setLoading(false);
     }
   };

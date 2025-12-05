@@ -78,19 +78,40 @@ export async function updateUserProfile(userId: string, updates: Partial<User>) 
 }
 
 export function onAuthStateChange(callback: (user: User | null) => void) {
-  return supabase.auth.onAuthStateChange((event, session) => {
+  return supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session?.user) {
-      (async () => {
-        try {
-          const user = await getCurrentUser();
-          callback(user);
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          callback(null);
+      try {
+        // Add retry logic for user profile fetch
+        let user = null;
+        let retries = 3;
+        while (!user && retries > 0) {
+          try {
+            user = await getCurrentUser();
+            if (!user) {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              retries--;
+            }
+          } catch (error) {
+            console.error('Error fetching user, retrying...', error);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            retries--;
+          }
         }
-      })();
+        callback(user);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        callback(null);
+      }
     } else if (event === 'SIGNED_OUT') {
       callback(null);
+    } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+      // Also handle token refresh
+      try {
+        const user = await getCurrentUser();
+        callback(user);
+      } catch (error) {
+        console.error('Error fetching user on token refresh:', error);
+      }
     }
   });
 }

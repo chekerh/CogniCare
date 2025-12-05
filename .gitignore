@@ -24,6 +24,8 @@ build
 .env.development.local
 .env.test.local
 .env.production.local
+# Allow .env.example (template file)
+!.env.example
 
 # IDE
 .vscode/*
@@ -32,15 +34,6 @@ build
 *.swp
 *.swo
 *~
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
 
 # Python (for AI server)
 __pycache__/
@@ -76,3 +69,29 @@ coverage/
 
 # Netlify
 .netlify
+
+# AI Server models (large files, should be downloaded separately)
+ai/server/models/*.onnx
+ai/server/models/*.pth
+ai/server/models/*.h5
+ai/server/models/*.pb
+!ai/server/models/.gitkeep
+
+# Database dumps
+*.sql.backup
+*.dump
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

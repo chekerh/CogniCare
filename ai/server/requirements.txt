@@ -9,3 +9,8 @@ pydantic==2.5.0
 # ONNX Runtime for running trained models in production
 onnxruntime==1.18.0
 
+# Training dependencies (optional - only needed if training models)
+# tensorflow>=2.13.0
+# tf2onnx>=1.15.0
+# keras>=2.13.0
+

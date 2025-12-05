@@ -1,0 +1,4 @@
+# This directory stores trained AI models
+# Models are not committed to git (they're large files)
+# Use download_models.py or train_emotion_model.py to get models
+

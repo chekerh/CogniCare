@@ -125,7 +125,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 VITE_AI_SERVER_URL=http://localhost:8000
 EOF
 
-# Set up database (see DATABASE_SETUP.md)
+# Set up database (see SETUP.md)
 # Run migrations in Supabase SQL Editor
 
 # Start development server
@@ -134,7 +134,7 @@ npm run dev
 
 Visit `http://localhost:5173` 🎉
 
-**📖 For detailed setup instructions, see [SETUP.md](./SETUP.md) or [QUICK_START.md](./QUICK_START.md)**
+**📖 For complete setup instructions, see [SETUP.md](./SETUP.md) - This is your main guide!**
 
 ---
 
@@ -261,14 +261,12 @@ railway up
 
 ## 📚 Documentation
 
-Comprehensive documentation is available:
+**Main Setup Guide:**
+- **[SETUP.md](./SETUP.md)** - Complete setup guide (start here!)
 
-- **[SETUP.md](./SETUP.md)** - Complete setup guide
-- **[DATABASE_SETUP.md](./DATABASE_SETUP.md)** - Database setup step-by-step
+**Additional Resources:**
+- **[DATABASE_SETUP.md](./DATABASE_SETUP.md)** - Detailed database reference
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment guide
-- **[QUICK_START.md](./QUICK_START.md)** - 5-minute quick start
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
-- **[GITHUB_SETUP.md](./GITHUB_SETUP.md)** - GitHub repository setup
 
 ---
 

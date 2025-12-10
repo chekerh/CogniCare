@@ -2,6 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme CSS Variables */
+:root {
+  --color-primary: #14b8a6;
+  --color-secondary: #0d9488;
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+}
+
+.dark {
+  --color-primary: #2dd4bf;
+  --color-secondary: #14b8a6;
+  --color-background: #111827;
+  --color-surface: #1f2937;
+  --color-text: #f9fafb;
+  --color-text-secondary: #9ca3af;
+  --color-border: #374151;
+}
+
+[data-theme="pooh"] {
+  --color-primary: #FFD700;
+  --color-secondary: #F4A460;
+  --color-accent: #FF6B6B;
+  --color-background: #FFF8DC;
+  --color-surface: #FFEFD5;
+  --color-text: #654321;
+  --color-text-secondary: #5C4033;
+  --color-border: #DEB887;
+}
+
+/* Pooh theme specific styles */
+[data-theme="pooh"] {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+[data-theme="pooh"] .bg-white {
+  background-color: var(--color-surface) !important;
+}
+
+[data-theme="pooh"] .text-gray-900,
+[data-theme="pooh"] .text-gray-800,
+[data-theme="pooh"] .text-gray-700 {
+  color: var(--color-text) !important;
+}
+
+[data-theme="pooh"] .text-gray-600,
+[data-theme="pooh"] .text-gray-500 {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="pooh"] .border-gray-200,
+[data-theme="pooh"] .border-gray-300 {
+  border-color: var(--color-border) !important;
+}
+
+/* Pooh theme decorative honeycomb pattern */
+[data-theme="pooh"] {
+  position: relative;
+}
+
+/* Add subtle honeycomb pattern background */
+[data-theme="pooh"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(244, 164, 96, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="pooh"] > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Custom animations and glassmorphism effects */
 @layer utilities {
   .glass {
@@ -79,13 +163,37 @@
   border-radius: 10px;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.pooh-theme ::-webkit-scrollbar-track {
+  background: #F5F5DC;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #14b8a6;
   border-radius: 10px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #2dd4bf;
+}
+
+.pooh-theme ::-webkit-scrollbar-thumb {
+  background: #FFD700;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #0d9488;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #14b8a6;
+}
+
+.pooh-theme ::-webkit-scrollbar-thumb:hover {
+  background: #F4A460;
 }
 
 /* Accessibility: Screen reader only */

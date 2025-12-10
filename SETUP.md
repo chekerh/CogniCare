@@ -66,7 +66,15 @@ Before starting, ensure you have:
    - Paste into SQL Editor
    - Click **"Run"**
    - Wait for "Success" message
-4. **Optional: Add Demo Data**
+4. **Run Migration 3: AI Reports Update (Required for Progression Tracking)**
+   - Click "New Query" again
+   - Open file: `supabase/migrations/20250115000000_update_ai_reports_schema.sql`
+   - Copy **ALL** contents
+   - Paste into SQL Editor
+   - Click **"Run"**
+   - Wait for "Success" message
+   - **This migration adds fields needed for metrics-based AI analysis and progression tracking**
+5. **Optional: Add Demo Data**
    - If you want test data, run: `supabase/migrations/20251008134158_add_demo_data.sql`
 
 ### Step 1.4: Create Storage Buckets
@@ -102,13 +110,37 @@ This creates an auto-trigger that creates user profiles when users sign up, prev
 2. **Check these tables exist:**
    - ✅ `users`
    - ✅ `children`
+   - ✅ `game_sessions` (for tracking game play)
+   - ✅ `ai_reports` (for AI analysis and progression)
    - ✅ `posts`
    - ✅ `groups`
    - ✅ `reels`
    - ✅ `messages`
    - ✅ `consultations`
 
-If all tables exist, **database is ready! ✅**
+3. **Verify AI Reports Table Has Required Fields:**
+   - Go to **Table Editor** → `ai_reports` → **View Columns**
+   - Check these columns exist:
+     - ✅ `engagement_score` (numeric)
+     - ✅ `attention_score` (numeric)
+     - ✅ `emotion_distribution` (jsonb)
+     - ✅ `gaze_patterns` (jsonb)
+     - ✅ `speech_emotions` (jsonb)
+     - ✅ `recommendations` (jsonb array)
+     - ✅ `insights` (text)
+
+4. **Verify Game Sessions Table Has Required Fields:**
+   - Go to **Table Editor** → `game_sessions` → **View Columns**
+   - Check these columns exist:
+     - ✅ `metrics` (jsonb) - stores reaction_times, avg_reaction_time, etc.
+     - ✅ `video_frames` (jsonb) - for optional camera data
+     - ✅ `accuracy` (numeric)
+     - ✅ `score` (integer)
+     - ✅ `duration_seconds` (integer)
+
+If all tables and columns exist, **database is ready! ✅**
+
+**Note:** These fields are essential for tracking child progression. Without them, the statistics and dashboard features won't work properly.
 
 ---
 

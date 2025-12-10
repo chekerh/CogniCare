@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { sanitizeInput } from '../../lib/validation';
 import { Send } from 'lucide-react';
 
@@ -12,6 +13,7 @@ interface CreatePostProps {
 export function CreatePost({ onPostCreated }: CreatePostProps) {
   const { user } = useAuth();
   const { showSuccess, showError } = useToast();
+  const { t } = useLanguage();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -55,20 +57,20 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4" role="region" aria-label="إنشاء منشور جديد">
-      <form onSubmit={handleSubmit} aria-label="نموذج إنشاء منشور">
+    <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-lg shadow-md p-4" role="region" aria-label={t('post.create')}>
+      <form onSubmit={handleSubmit} aria-label={t('post.createForm')}>
         <label htmlFor="post-content" className="sr-only">
-          محتوى المنشور
+          {t('post.content')}
         </label>
         <textarea
           id="post-content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="شارك تجربتك أو اطرح سؤالاً..."
-          className="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+          placeholder={t('post.placeholder')}
+          className="w-full p-3 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md resize-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
           rows={3}
           dir="auto"
-          aria-label="محتوى المنشور"
+          aria-label={t('post.content')}
           aria-required="true"
           aria-invalid={content.trim().length > 0 && content.trim().length < 3}
         />
@@ -76,11 +78,11 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
           <button
             type="submit"
             disabled={!content.trim() || loading}
-            className="flex items-center space-x-2 space-x-reverse bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500"
-            aria-label={loading ? 'جاري النشر...' : 'نشر المنشور'}
+            className="flex items-center space-x-2 space-x-reverse bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark px-4 py-2 rounded-md hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow"
+            aria-label={loading ? t('post.publishing') : t('post.publish')}
           >
             <Send className="w-4 h-4" aria-hidden="true" />
-            <span>{loading ? 'جاري النشر...' : 'نشر'}</span>
+            <span>{loading ? t('post.publishing') : t('post.publish')}</span>
           </button>
         </div>
       </form>

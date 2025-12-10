@@ -13,10 +13,11 @@ node_modules
 .pnp.js
 
 # Build outputs
-dist
-dist-ssr
-build
+dist/
+dist-ssr/
+build/
 *.local
+.vite/
 
 # Environment variables
 .env
@@ -47,10 +48,15 @@ ENV/
 .venv
 pip-log.txt
 pip-delete-this-directory.txt
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Kaggle credentials
+# Kaggle credentials and secrets
 .kaggle/
-supabase/secrets/kaggle.json
+supabase/secrets/
+supabase/secrets/*.json
 
 # Testing
 coverage/
@@ -95,3 +101,27 @@ ai/server/models/*.pb
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Additional build and cache files
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.output/
+
+# Lock files (keep package-lock.json, ignore others)
+yarn.lock
+pnpm-lock.yaml
+
+# Local development
+.local/
+local/
+*.local.*
+
+# Backup files
+*.bak
+*.backup
+*~

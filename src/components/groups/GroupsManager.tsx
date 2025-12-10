@@ -110,22 +110,22 @@ export function GroupsManager() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">جاري التحميل...</div>
+        <div className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">جاري التحميل...</div>
       </div>
     );
   }
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center space-x-2 space-x-reverse">
-            <Users className="w-6 h-6 text-teal-600" />
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark flex items-center space-x-2 space-x-reverse">
+            <Users className="w-6 h-6 text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark" />
             <span>المجموعات</span>
           </h2>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center space-x-2 space-x-reverse bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors"
+            className="flex items-center space-x-2 space-x-reverse bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark px-4 py-2 rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors"
           >
             <Plus className="w-5 h-5" />
             <span>إنشاء مجموعة</span>
@@ -133,13 +133,13 @@ export function GroupsManager() {
         </div>
 
         <div className="relative">
-          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 pooh:text-pooh-brown w-5 h-5" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="ابحث عن مجموعة..."
-            className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full pr-10 pl-4 py-3 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-lg focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
             dir="rtl"
           />
         </div>
@@ -149,25 +149,25 @@ export function GroupsManager() {
         {filteredGroups.map((group) => (
           <div
             key={group.id}
-            className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-all cursor-pointer"
+            className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-md p-6 hover:shadow-lg transition-all cursor-pointer"
             onClick={() => setSelectedGroup(group)}
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 dark:from-teal-500 dark:to-cyan-600 pooh:from-pooh-yellow pooh:to-pooh-yellow-dark rounded-full flex items-center justify-center">
+                <Users className="w-6 h-6 text-white dark:text-gray-900 pooh:text-pooh-brown-dark" />
               </div>
               {group.isMember && (
-                <span className="px-2 py-1 bg-teal-100 text-teal-700 text-xs rounded-full">
+                <span className="px-2 py-1 bg-teal-100 dark:bg-teal-900/30 pooh:bg-pooh-yellow-light text-teal-700 dark:text-teal-300 pooh:text-pooh-brown-dark text-xs rounded-full">
                   عضو
                 </span>
               )}
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{group.name}</h3>
-            <p className="text-sm text-gray-600 mb-4 line-clamp-2">{group.description}</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">{group.name}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown mb-4 line-clamp-2">{group.description}</p>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-1 space-x-reverse text-sm text-gray-500">
+              <div className="flex items-center space-x-1 space-x-reverse text-sm text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
                 <Users className="w-4 h-4" />
                 <span>{group.memberCount} عضو</span>
               </div>
@@ -177,7 +177,7 @@ export function GroupsManager() {
                     e.stopPropagation();
                     joinGroup(group.id);
                   }}
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors text-sm"
+                  className="px-4 py-2 bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors text-sm"
                 >
                   انضم
                 </button>
@@ -187,7 +187,7 @@ export function GroupsManager() {
                     e.stopPropagation();
                     leaveGroup(group.id);
                   }}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm"
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 pooh:bg-pooh-burlywood text-gray-700 dark:text-gray-300 pooh:text-pooh-brown-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 pooh:hover:bg-pooh-yellow transition-colors text-sm"
                 >
                   اترك
                 </button>

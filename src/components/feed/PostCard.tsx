@@ -87,11 +87,11 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-lg shadow-md p-6">
       <div className="flex items-start space-x-3 space-x-reverse">
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-            <span className="text-teal-700 font-semibold text-sm">
+          <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 pooh:bg-pooh-yellow-light rounded-full flex items-center justify-center">
+            <span className="text-teal-700 dark:text-teal-300 pooh:text-pooh-brown-dark font-semibold text-sm">
               {post.author.display_name?.[0] || post.author.full_name[0]}
             </span>
           </div>
@@ -99,18 +99,18 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">
                 {post.author.display_name || post.author.full_name}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
                 {formatDistanceToNow(post.created_at)}
               </p>
             </div>
-            <button className="text-gray-400 hover:text-red-500 transition-colors">
+            <button className="text-gray-400 dark:text-gray-500 pooh:text-pooh-brown hover:text-red-500 dark:hover:text-red-400 pooh:hover:text-pooh-red transition-colors">
               <Flag className="w-4 h-4" />
             </button>
           </div>
-          <p className="mt-2 text-gray-800 whitespace-pre-wrap" dir="auto">
+          <p className="mt-2 text-gray-800 dark:text-gray-200 pooh:text-pooh-brown-dark whitespace-pre-wrap" dir="auto">
             {post.content}
           </p>
 
@@ -119,8 +119,8 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
               onClick={handleReaction}
               className={`flex items-center space-x-1 space-x-reverse transition-colors ${
                 post.user_reaction === 'heart'
-                  ? 'text-red-600'
-                  : 'text-gray-500 hover:text-red-600'
+                  ? 'text-red-600 dark:text-red-400 pooh:text-pooh-red'
+                  : 'text-gray-500 dark:text-gray-400 pooh:text-pooh-brown hover:text-red-600 dark:hover:text-red-400 pooh:hover:text-pooh-red'
               }`}
             >
               <Heart
@@ -132,7 +132,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
 
             <button
               onClick={() => setShowComments(!showComments)}
-              className="flex items-center space-x-1 space-x-reverse text-gray-500 hover:text-teal-600 transition-colors"
+              className="flex items-center space-x-1 space-x-reverse text-gray-500 dark:text-gray-400 pooh:text-pooh-brown hover:text-teal-600 dark:hover:text-teal-400 pooh:hover:text-pooh-yellow-dark transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
               <span className="text-sm">{comments.length}</span>
@@ -142,26 +142,26 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
           {showComments && (
             <div className="mt-4 space-y-4">
               {loadingComments ? (
-                <p className="text-sm text-gray-500">جاري التحميل...</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">جاري التحميل...</p>
               ) : (
                 <>
                   {comments.map((comment) => (
                     <div key={comment.id} className="flex space-x-2 space-x-reverse">
                       <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                          <span className="text-gray-600 font-medium text-xs">
+                        <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 pooh:bg-pooh-burlywood rounded-full flex items-center justify-center">
+                          <span className="text-gray-600 dark:text-gray-300 pooh:text-pooh-brown-dark font-medium text-xs">
                             {comment.author.display_name?.[0] || comment.author.full_name[0]}
                           </span>
                         </div>
                       </div>
-                      <div className="flex-1 bg-gray-50 rounded-lg p-3">
-                        <p className="text-sm font-medium text-gray-900">
+                      <div className="flex-1 bg-gray-50 dark:bg-gray-700/50 pooh:bg-pooh-cream rounded-lg p-3">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">
                           {comment.author.display_name || comment.author.full_name}
                         </p>
-                        <p className="text-sm text-gray-700 mt-1" dir="auto">
+                        <p className="text-sm text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mt-1" dir="auto">
                           {comment.content}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown mt-1">
                           {formatDistanceToNow(comment.created_at)}
                         </p>
                       </div>
@@ -174,13 +174,13 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="اكتب تعليق..."
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md text-sm focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
                       dir="auto"
                     />
                     <button
                       type="submit"
                       disabled={!newComment.trim()}
-                      className="px-4 py-2 bg-teal-600 text-white rounded-md text-sm hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                      className="px-4 py-2 bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark rounded-md text-sm hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                     >
                       إرسال
                     </button>

@@ -184,36 +184,36 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">جاري التحميل...</div>
+        <div className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">جاري التحميل...</div>
       </div>
     );
   }
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 pooh:bg-opacity-40 flex items-center justify-center p-4 z-50"
       role="dialog"
       aria-modal="true"
       aria-labelledby="chat-title"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl h-[80vh] flex flex-col">
+      <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-2xl w-full max-w-2xl h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 pooh:border-pooh-burlywood">
           <div className="flex items-center space-x-3 space-x-reverse">
-            <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center" aria-hidden="true">
-              <span className="text-teal-700 font-bold">
+            <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 pooh:bg-pooh-yellow-light rounded-full flex items-center justify-center" aria-hidden="true">
+              <span className="text-teal-700 dark:text-teal-300 pooh:text-pooh-brown-dark font-bold">
                 {conversation.otherUser.full_name[0]}
               </span>
             </div>
             <div>
-              <h3 id="chat-title" className="font-semibold text-gray-900">{conversation.otherUser.full_name}</h3>
-              <p className="text-xs text-gray-500">متصل</p>
+              <h3 id="chat-title" className="font-semibold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{conversation.otherUser.full_name}</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">متصل</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="p-2 text-gray-600 dark:text-gray-300 pooh:text-pooh-brown hover:text-red-600 dark:hover:text-red-400 pooh:hover:text-pooh-red hover:bg-red-50 dark:hover:bg-red-900/20 pooh:hover:bg-pooh-red/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
             aria-label="إغلاق النافذة"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -235,14 +235,16 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
               <div
                 className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                   message.sender_id === user!.id
-                    ? 'bg-teal-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
+                    ? 'bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark'
+                    : 'bg-gray-100 dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark'
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
                 <p
                   className={`text-xs mt-1 ${
-                    message.sender_id === user!.id ? 'text-teal-100' : 'text-gray-500'
+                    message.sender_id === user!.id 
+                      ? 'text-teal-100 dark:text-gray-700 pooh:text-pooh-brown' 
+                      : 'text-gray-500 dark:text-gray-400 pooh:text-pooh-brown'
                   }`}
                 >
                   {formatDate(message.created_at)}
@@ -254,7 +256,7 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-gray-200" role="region" aria-label="إدخال الرسالة">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 pooh:border-pooh-burlywood" role="region" aria-label="إدخال الرسالة">
           <div className="flex items-center space-x-2 space-x-reverse">
             <label htmlFor="message-input" className="sr-only">
               اكتب رسالة
@@ -266,7 +268,7 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               placeholder="اكتب رسالة..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-lg focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
               dir="rtl"
               aria-label="اكتب رسالة"
               aria-required="true"
@@ -274,7 +276,7 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
             <button
               onClick={sendMessage}
               disabled={sending || !newMessage.trim()}
-              className="bg-teal-600 text-white p-2 rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark p-2 rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow"
               aria-label={sending ? 'جاري الإرسال...' : 'إرسال الرسالة'}
             >
               <Send className="w-5 h-5" aria-hidden="true" />

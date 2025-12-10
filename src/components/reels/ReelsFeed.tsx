@@ -133,17 +133,17 @@ export function ReelsFeed() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-gray-500">جاري التحميل...</div>
+      <div className="flex items-center justify-center h-screen bg-black dark:bg-gray-900 pooh:bg-pooh-cream">
+        <div className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">جاري التحميل...</div>
       </div>
     );
   }
 
   if (reels.length === 0) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-black dark:bg-gray-900 pooh:bg-pooh-cream">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">لا توجد مقاطع فيديو بعد</p>
+          <p className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown mb-4">لا توجد مقاطع فيديو بعد</p>
         </div>
       </div>
     );
@@ -192,14 +192,14 @@ export function ReelsFeed() {
                   {/* Author info */}
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 space-x-reverse mb-2">
-                      <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-                        <span className="text-teal-700 font-bold">
+                      <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 pooh:bg-pooh-yellow-light rounded-full flex items-center justify-center">
+                        <span className="text-teal-700 dark:text-teal-300 pooh:text-pooh-brown-dark font-bold">
                           {reel.author.full_name[0]}
                         </span>
                       </div>
                       <div>
-                        <h3 className="font-semibold text-white">{reel.author.full_name}</h3>
-                        <p className="text-xs text-gray-300">{formatDate(reel.created_at)}</p>
+                        <h3 className="font-semibold text-white dark:text-gray-100 pooh:text-pooh-brown-dark">{reel.author.full_name}</h3>
+                        <p className="text-xs text-gray-300 dark:text-gray-400 pooh:text-pooh-brown">{formatDate(reel.created_at)}</p>
                       </div>
                     </div>
                     {reel.caption && (
@@ -214,26 +214,28 @@ export function ReelsFeed() {
                     <button
                       onClick={() => toggleLike(reel.id)}
                       className={`p-3 rounded-full ${
-                        reel.isLiked ? 'bg-teal-600' : 'bg-black/50'
-                      } text-white hover:bg-teal-600 transition-colors`}
+                        reel.isLiked 
+                          ? 'bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark' 
+                          : 'bg-black/50 dark:bg-gray-800/50 pooh:bg-pooh-burlywood/50'
+                      } text-white dark:text-gray-100 pooh:text-pooh-brown-dark hover:bg-teal-600 dark:hover:bg-teal-500 pooh:hover:bg-pooh-yellow transition-colors`}
                     >
                       <Heart
                         className={`w-6 h-6 ${reel.isLiked ? 'fill-current' : ''}`}
                       />
                     </button>
-                    <span className="text-white text-sm">{reel.likeCount}</span>
+                    <span className="text-white dark:text-gray-100 pooh:text-pooh-brown-dark text-sm">{reel.likeCount}</span>
 
-                    <button className="p-3 rounded-full bg-black/50 text-white hover:bg-teal-600 transition-colors">
+                    <button className="p-3 rounded-full bg-black/50 dark:bg-gray-800/50 pooh:bg-pooh-burlywood/50 text-white dark:text-gray-100 pooh:text-pooh-brown-dark hover:bg-teal-600 dark:hover:bg-teal-500 pooh:hover:bg-pooh-yellow transition-colors">
                       <MessageCircle className="w-6 h-6" />
                     </button>
 
-                    <button className="p-3 rounded-full bg-black/50 text-white hover:bg-teal-600 transition-colors">
+                    <button className="p-3 rounded-full bg-black/50 dark:bg-gray-800/50 pooh:bg-pooh-burlywood/50 text-white dark:text-gray-100 pooh:text-pooh-brown-dark hover:bg-teal-600 dark:hover:bg-teal-500 pooh:hover:bg-pooh-yellow transition-colors">
                       <Share2 className="w-6 h-6" />
                     </button>
 
                     <button
                       onClick={() => togglePlay(reel.id)}
-                      className="p-3 rounded-full bg-black/50 text-white hover:bg-teal-600 transition-colors"
+                      className="p-3 rounded-full bg-black/50 dark:bg-gray-800/50 pooh:bg-pooh-burlywood/50 text-white dark:text-gray-100 pooh:text-pooh-brown-dark hover:bg-teal-600 dark:hover:bg-teal-500 pooh:hover:bg-pooh-yellow transition-colors"
                     >
                       {playing[reel.id] ? (
                         <Pause className="w-6 h-6" />

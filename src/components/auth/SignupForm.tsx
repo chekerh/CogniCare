@@ -79,10 +79,10 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+    <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-lg shadow-lg p-8">
       <div className="flex items-center justify-center mb-6">
-        <UserPlus className="w-8 h-8 text-teal-600 mr-2" />
-        <h2 className="text-2xl font-bold text-gray-800">إنشاء حساب جديد</h2>
+        <UserPlus className="w-8 h-8 text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark mr-2" />
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark">إنشاء حساب جديد</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">

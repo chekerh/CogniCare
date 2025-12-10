@@ -163,7 +163,8 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
       const accuracy = ((cards.length / 2) / moves) * 100;
       const errors = moves - (cards.length / 2);
 
-      // Try to get AI metrics
+      // Always use metrics-based analysis (primary method)
+      // Optionally enhance with camera data if available
       let metrics: any = {};
       if (frames.length > 0) {
         try {
@@ -178,8 +179,8 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
             errors,
           };
         } catch (error) {
-          console.error('Error getting AI metrics:', error);
-          // Use fallback metrics
+          console.error('Error getting AI metrics from camera:', error);
+          // Fall back to metrics-based analysis
           metrics = calculateFallbackMetrics(
             accuracy,
             reactionTimes,
@@ -188,7 +189,7 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
           );
         }
       } else {
-        // Use fallback metrics
+        // Always use metrics-based analysis
         metrics = calculateFallbackMetrics(
           accuracy,
           reactionTimes,
@@ -209,6 +210,10 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
             moves,
             pairs: cards.length / 2,
             reaction_times: reactionTimes,
+            avg_reaction_time: reactionTimes.length > 0 
+              ? reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length 
+              : 0,
+            completion_time: duration,
             ...metrics,
           },
           camera_enabled: cameraEnabled,
@@ -219,8 +224,8 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
 
       if (sessionError) throw sessionError;
 
-      // Create AI report if we have frames
-      if (frames.length > 0 && session) {
+      // Always create AI report based on metrics
+      if (session) {
         await supabase.from('ai_reports').insert({
           session_id: session.id,
           child_id: child.id,
@@ -229,8 +234,8 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
           emotion_distribution: metrics.emotion_distribution || {},
           gaze_patterns: metrics.gaze_patterns || {},
           speech_emotions: metrics.speech_emotions || {},
-          insights: metrics.recommendations?.join('\n') || null,
-          recommendations: metrics.recommendations || [],
+          insights: metrics.recommendations?.join('\n') || generateInsights(metrics, accuracy, reactionTimes, duration),
+          recommendations: metrics.recommendations || generateRecommendations(metrics, accuracy, reactionTimes, duration),
         });
       }
     } catch (error) {
@@ -238,9 +243,65 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
     }
   };
 
+  // Generate insights based on metrics
+  const generateInsights = (metrics: any, accuracy: number, reactionTimes: number[], duration: number): string => {
+    const insights: string[] = [];
+    const avgReactionTime = reactionTimes.length > 0 
+      ? reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length 
+      : 0;
+
+    if (accuracy >= 90) {
+      insights.push('دقة ممتازة في اللعبة!');
+    } else if (accuracy >= 70) {
+      insights.push('دقة جيدة، يمكن تحسينها أكثر');
+    }
+
+    if (avgReactionTime < 1000 && reactionTimes.length > 0) {
+      insights.push('سرعة رد فعل ممتازة');
+    } else if (avgReactionTime < 2000) {
+      insights.push('سرعة رد فعل جيدة');
+    }
+
+    if (duration < 60) {
+      insights.push('إتمام سريع للعبة');
+    }
+
+    if (metrics.engagement_score >= 80) {
+      insights.push('مستوى انخراط عالي');
+    }
+
+    return insights.length > 0 ? insights.join('\n') : 'أداء جيد في هذه الجلسة';
+  };
+
+  // Generate recommendations based on metrics
+  const generateRecommendations = (metrics: any, accuracy: number, reactionTimes: number[], duration: number): string[] => {
+    const recommendations: string[] = [];
+    const avgReactionTime = reactionTimes.length > 0 
+      ? reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length 
+      : 0;
+
+    if (accuracy < 70) {
+      recommendations.push('تدريب إضافي على التركيز والدقة');
+    }
+
+    if (avgReactionTime > 2000) {
+      recommendations.push('تمارين لتحسين سرعة رد الفعل');
+    }
+
+    if (metrics.engagement_score < 60) {
+      recommendations.push('محاولة ألعاب مختلفة لزيادة الاهتمام');
+    }
+
+    if (duration > 300) {
+      recommendations.push('أخذ فترات راحة بين الجلسات');
+    }
+
+    return recommendations.length > 0 ? recommendations : ['استمر في الممارسة للحفاظ على التقدم'];
+  };
+
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 relative">
+    <div className="fixed inset-0 bg-gradient-to-br from-teal-400 to-cyan-500 dark:from-gray-800 dark:to-gray-900 pooh:from-pooh-cream pooh:to-pooh-beige flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-2xl max-w-2xl w-full p-6 relative">
         {/* Camera toggle */}
         <div className="absolute top-4 left-4">
           <button
@@ -256,8 +317,8 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
             } : requestCameraPermission}
             className={`p-2 rounded-full ${
               cameraEnabled
-                ? 'bg-green-100 text-green-700'
-                : 'bg-gray-100 text-gray-600'
+                ? 'bg-green-100 dark:bg-green-900/30 pooh:bg-pooh-yellow-light text-green-700 dark:text-green-300 pooh:text-pooh-brown-dark'
+                : 'bg-gray-100 dark:bg-gray-700 pooh:bg-pooh-burlywood text-gray-600 dark:text-gray-300 pooh:text-pooh-brown'
             } hover:bg-opacity-80 transition-colors`}
             title={cameraEnabled ? 'إيقاف الكاميرا' : 'تفعيل الكاميرا للتحليل'}
           >
@@ -285,15 +346,15 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
 
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">لعبة الذاكرة</h2>
-            <p className="text-sm text-gray-600">المحاولات: {moves}</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">لعبة الذاكرة</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">المحاولات: {moves}</p>
             {cameraEnabled && (
-              <p className="text-xs text-green-600 mt-1">✓ التحليل بالذكاء الاصطناعي مفعل</p>
+              <p className="text-xs text-green-600 dark:text-green-400 pooh:text-pooh-yellow-dark mt-1">✓ التحليل بالذكاء الاصطناعي مفعل</p>
             )}
           </div>
           <button
             onClick={onExit}
-            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-300 pooh:text-pooh-brown hover:text-red-600 dark:hover:text-red-400 pooh:hover:text-pooh-red hover:bg-red-50 dark:hover:bg-red-900/20 pooh:hover:bg-pooh-red/10 rounded-full transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
@@ -301,12 +362,12 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
 
         {gameComplete ? (
           <div className="text-center py-12">
-            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Star className="w-12 h-12 text-yellow-500 fill-current" />
+            <div className="w-20 h-20 bg-yellow-100 dark:bg-yellow-900/30 pooh:bg-pooh-yellow-light rounded-full flex items-center justify-center mx-auto mb-4">
+              <Star className="w-12 h-12 text-yellow-500 dark:text-yellow-400 pooh:text-pooh-yellow-dark fill-current" />
             </div>
-            <h3 className="text-3xl font-bold text-gray-900 mb-2">أحسنت يا {child.name}!</h3>
-            <p className="text-lg text-gray-600 mb-2">أكملت اللعبة في {moves} محاولة</p>
-            <p className="text-2xl font-bold text-teal-600 mb-6">النقاط: {score}</p>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">أحسنت يا {child.name}!</h3>
+            <p className="text-lg text-gray-600 dark:text-gray-300 pooh:text-pooh-brown mb-2">أكملت اللعبة في {moves} محاولة</p>
+            <p className="text-2xl font-bold text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark mb-6">النقاط: {score}</p>
             <div className="flex space-x-3 space-x-reverse justify-center">
               <button
                 onClick={() => {
@@ -318,13 +379,13 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
                   setReactionTimes([]);
                   initializeGame();
                 }}
-                className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors"
+                className="bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark px-6 py-2 rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors"
               >
                 العب مرة أخرى
               </button>
               <button
                 onClick={onExit}
-                className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                className="bg-gray-200 dark:bg-gray-700 pooh:bg-pooh-burlywood text-gray-700 dark:text-gray-300 pooh:text-pooh-brown-dark px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 pooh:hover:bg-pooh-yellow transition-colors"
               >
                 خروج
               </button>
@@ -338,8 +399,8 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
                 onClick={() => handleCardClick(card.id)}
                 className={`aspect-square rounded-xl text-4xl flex items-center justify-center transition-all transform hover:scale-105 ${
                   card.flipped || card.matched
-                    ? 'bg-white border-2 border-teal-400 shadow-lg'
-                    : 'bg-gradient-to-br from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700'
+                    ? 'bg-white dark:bg-gray-700 pooh:bg-pooh-cream border-2 border-teal-400 dark:border-teal-500 pooh:border-pooh-yellow shadow-lg'
+                    : 'bg-gradient-to-br from-teal-500 to-cyan-600 dark:from-teal-600 dark:to-cyan-700 pooh:from-pooh-yellow pooh:to-pooh-yellow-dark hover:from-teal-600 hover:to-cyan-700 dark:hover:from-teal-700 dark:hover:to-cyan-800 pooh:hover:from-pooh-yellow-dark pooh:hover:to-pooh-yellow'
                 }`}
                 disabled={card.matched}
               >

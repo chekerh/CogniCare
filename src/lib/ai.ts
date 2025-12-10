@@ -139,24 +139,56 @@ export function calculateFallbackMetrics(
     ? reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length
     : 0;
 
+  // Enhanced engagement calculation based on multiple factors
+  const accuracyWeight = 0.35;
+  const reactionTimeWeight = 0.25;
+  const completionTimeWeight = 0.20;
+  const errorRateWeight = 0.20;
+
+  // Normalize reaction time (lower is better, max 3000ms)
+  const reactionTimeScore = Math.max(0, 1 - Math.min(avgReactionTime / 3000, 1));
+  
+  // Normalize completion time (shorter is better, but not too short)
+  const optimalDuration = 120; // 2 minutes is optimal
+  const completionTimeScore = Math.max(0, 1 - Math.abs(duration - optimalDuration) / optimalDuration);
+  
+  // Error rate (lower is better)
+  const errorRate = errors / Math.max(duration, 1);
+  const errorRateScore = Math.max(0, 1 - Math.min(errorRate, 1));
+
   const engagementScore = Math.min(
-    (accuracy / 100) * 0.4 +
-    (1 - Math.min(avgReactionTime / 2000, 1)) * 0.3 +
-    (1 - Math.min(errors / duration, 1)) * 0.3,
+    (accuracy / 100) * accuracyWeight +
+    reactionTimeScore * reactionTimeWeight +
+    completionTimeScore * completionTimeWeight +
+    errorRateScore * errorRateWeight,
     1
   );
 
+  // Attention score based on accuracy and consistency
+  const reactionTimeVariance = reactionTimes.length > 1
+    ? calculateVariance(reactionTimes)
+    : 0;
+  const consistencyScore = Math.max(0, 1 - (reactionTimeVariance / 1000000)); // Normalize variance
+  const attentionScore = (accuracy * 0.7) + (consistencyScore * 30);
+
   return {
     engagement_score: engagementScore * 100,
-    attention_score: accuracy,
+    attention_score: Math.min(attentionScore, 100),
     emotion_distribution: {},
     gaze_patterns: {},
     speech_emotions: {},
-    recommendations: generateRecommendations(engagementScore, accuracy),
+    recommendations: generateRecommendations(engagementScore, accuracy, avgReactionTime, duration),
   };
 }
 
-function generateRecommendations(engagement: number, accuracy: number): string[] {
+function calculateVariance(numbers: number[]): number {
+  if (numbers.length === 0) return 0;
+  const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+  const squaredDiffs = numbers.map(n => Math.pow(n - mean, 2));
+  return squaredDiffs.reduce((a, b) => a + b, 0) / numbers.length;
+}
+
+function generateRecommendations(engagement: number, accuracy: number, avgReactionTime: number, duration: number): string[] {
   const recommendations: string[] = [];
 
   if (engagement < 0.5) {
@@ -167,10 +199,22 @@ function generateRecommendations(engagement: number, accuracy: number): string[]
     recommendations.push('Practice with simpler difficulty levels first');
   }
 
+  if (avgReactionTime > 2000) {
+    recommendations.push('Try exercises to improve reaction speed');
+  }
+
+  if (duration > 300) {
+    recommendations.push('Take breaks between sessions to avoid fatigue');
+  }
+
   if (engagement > 0.8 && accuracy > 85) {
     recommendations.push('Great progress! Consider increasing difficulty');
   }
 
-  return recommendations;
+  if (accuracy >= 90 && avgReactionTime < 1500) {
+    recommendations.push('Excellent performance! Ready for more challenging games');
+  }
+
+  return recommendations.length > 0 ? recommendations : ['Keep practicing to maintain progress'];
 }
 

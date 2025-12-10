@@ -1,12 +1,16 @@
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { LoginForm } from './components/auth/LoginForm';
 import { SignupForm } from './components/auth/SignupForm';
 import { Header } from './components/layout/Header';
 import { LoadingSkeleton } from './components/common/LoadingSkeleton';
 import { HealthStatusIndicator } from './components/common/HealthStatus';
+import { ThemeSwitcher } from './components/common/ThemeSwitcher';
+import { LanguageSwitcher } from './components/common/LanguageSwitcher';
 import { Child } from './lib/supabase';
 import { Heart } from 'lucide-react';
 import { analytics } from './lib/analytics';
@@ -59,8 +63,10 @@ const ParentChildStats = lazy(() =>
   })),
 );
 
-function AppContent() {
+function AppContentInner() {
   const { user, loading } = useAuth();
+  const { theme } = useTheme();
+  const { direction, t } = useLanguage();
   const [authView, setAuthView] = useState<'login' | 'signup'>('login');
   const [currentView, setCurrentView] = useState('feed');
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
@@ -87,12 +93,12 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-gray-900 dark:to-gray-800 pooh:from-pooh-cream pooh:to-pooh-beige flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Heart className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Heart className="w-8 h-8 text-white dark:text-gray-900 pooh:text-pooh-brown-dark" />
           </div>
-          <p className="text-teal-600 font-medium">جاري التحميل...</p>
+          <p className="text-teal-600 dark:text-teal-400 pooh:text-pooh-brown-dark font-medium">جاري التحميل...</p>
         </div>
       </div>
     );
@@ -108,8 +114,8 @@ function AppContent() {
                 <Heart className="w-8 h-8 text-white" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Cognicare</h1>
-            <p className="text-lg text-gray-600">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">Cognicare</h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">
               منصة دعم شاملة لأمهات الأطفال ذوي الاحتياجات الخاصة
             </p>
           </div>
@@ -126,7 +132,7 @@ function AppContent() {
             />
           )}
 
-          <div className="mt-12 text-center text-sm text-gray-500">
+          <div className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
             <p>منصة آمنة ومشفرة لحماية خصوصيتك وخصوصية أطفالك</p>
           </div>
         </div>
@@ -135,13 +141,14 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 pooh:bg-pooh-cream relative ${direction === 'rtl' ? 'rtl' : 'ltr'}`}>
+      <div className="relative z-10">
       <Header currentView={currentView} onViewChange={setCurrentView} />
       <div className="fixed bottom-4 left-4 z-40">
         <HealthStatusIndicator />
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" role="main">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10" role="main">
         <Suspense fallback={<LoadingSkeleton />}>
           {currentView === 'feed' && <CommunityFeed />}
           {currentView === 'directory' && <SpecialistDirectory />}
@@ -154,9 +161,9 @@ function AppContent() {
             selectedChild ? (
               <ChildDashboard child={selectedChild} onBack={() => setSelectedChild(null)} />
             ) : (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">لوحات التقدم</h2>
-                <p className="text-gray-600 mb-4">اختر طفلاً لعرض لوحة التقدم</p>
+              <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('nav.dashboard')}</h2>
+                <p className="text-gray-600 dark:text-gray-300 pooh:text-pooh-brown mb-4">{t('dashboard.selectChild')}</p>
                 <Suspense fallback={<LoadingSkeleton />}>
                   <ChildrenManager onSelectChild={setSelectedChild} />
                 </Suspense>
@@ -166,36 +173,30 @@ function AppContent() {
           {currentView === 'consultations' && <ConsultationsManager />}
           {currentView === 'profile' && (
             <div
-              className="bg-white rounded-2xl shadow-lg p-8 text-center"
+              className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-8 text-center"
               role="region"
-              aria-label="الملف الشخصي"
+              aria-label={t('nav.profile')}
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">الملف الشخصي</h2>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('nav.profile')}</h2>
               <div className="space-y-3 text-right max-w-md mx-auto">
                 <div>
-                  <span className="font-medium text-gray-700">الاسم:</span>
-                  <span className="mr-2 text-gray-900">{user.full_name}</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown">{t('profile.name')}:</span>
+                  <span className="mr-2 text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{user.full_name}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-gray-700">البريد الإلكتروني:</span>
-                  <span className="mr-2 text-gray-900">{user.email}</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown">{t('profile.email')}:</span>
+                  <span className="mr-2 text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{user.email}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-gray-700">نوع الحساب:</span>
-                  <span className="mr-2 text-gray-900">
-                    {user.role === 'mother'
-                      ? 'أم'
-                      : user.role === 'specialist'
-                      ? 'أخصائي'
-                      : user.role === 'volunteer'
-                      ? 'متطوع'
-                      : 'مدير'}
+                  <span className="font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown">{t('profile.role')}:</span>
+                  <span className="mr-2 text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">
+                    {user.role === 'mother' ? t('role.mother') : user.role === 'specialist' ? t('role.specialist') : user.role === 'volunteer' ? t('role.volunteer') : t('role.admin')}
                   </span>
                 </div>
                 {user.location && (
                   <div>
-                    <span className="font-medium text-gray-700">المنطقة:</span>
-                    <span className="mr-2 text-gray-900">{user.location}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown">{t('profile.location')}:</span>
+                    <span className="mr-2 text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{user.location}</span>
                   </div>
                 )}
               </div>
@@ -205,11 +206,29 @@ function AppContent() {
                   <ParentChildStats />
                 </Suspense>
               )}
+
+              {/* Theme and Language Settings */}
+              <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 pooh:border-pooh-burlywood">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4 text-center">
+                  الإعدادات
+                </h3>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <div className="flex items-center space-x-3 space-x-reverse">
+                    <span className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">المظهر:</span>
+                    <ThemeSwitcher />
+                  </div>
+                  <div className="flex items-center space-x-3 space-x-reverse">
+                    <span className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">اللغة:</span>
+                    <LanguageSwitcher />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
           {currentView === 'admin' && user.role === 'admin' && <AdminPanel />}
         </Suspense>
       </main>
+      </div>
     </div>
   );
 }
@@ -217,11 +236,15 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <ToastProvider>
+      <ThemeProvider>
         <AuthProvider>
-          <AppContent />
+          <LanguageProvider>
+            <ToastProvider>
+              <AppContentInner />
+            </ToastProvider>
+          </LanguageProvider>
         </AuthProvider>
-      </ToastProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

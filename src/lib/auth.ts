@@ -85,7 +85,7 @@ export function onAuthStateChange(callback: (user: User | null) => void) {
         let user = null;
         let retries = 3;
         while (!user && retries > 0) {
-          try {
+        try {
             user = await getCurrentUser();
             if (!user) {
               await new Promise(resolve => setTimeout(resolve, 500));
@@ -97,11 +97,11 @@ export function onAuthStateChange(callback: (user: User | null) => void) {
             retries--;
           }
         }
-        callback(user);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        callback(null);
-      }
+          callback(user);
+        } catch (error) {
+          console.error('Error fetching user:', error);
+          callback(null);
+        }
     } else if (event === 'SIGNED_OUT') {
       callback(null);
     } else if (event === 'TOKEN_REFRESHED' && session?.user) {

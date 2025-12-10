@@ -10,9 +10,9 @@ BEGIN
     NEW.id,
     COALESCE(NEW.email, ''),
     COALESCE(NEW.raw_user_meta_data->>'full_name', 'User'),
-    COALESCE((NEW.raw_user_meta_data->>'role')::text, 'mother')::user_role,
+    COALESCE(NEW.raw_user_meta_data->>'role', 'mother'),
     COALESCE(NEW.raw_user_meta_data->>'display_name', SPLIT_PART(COALESCE(NEW.raw_user_meta_data->>'full_name', 'User'), ' ', 1)),
-    COALESCE((NEW.raw_user_meta_data->>'language_preference')::text, 'ar')::language_preference,
+    COALESCE(NEW.raw_user_meta_data->>'language_preference', 'ar'),
     false
   )
   ON CONFLICT (id) DO NOTHING;
@@ -35,9 +35,9 @@ SELECT
   au.id,
   au.email,
   COALESCE(au.raw_user_meta_data->>'full_name', 'User'),
-  COALESCE((au.raw_user_meta_data->>'role')::text, 'mother')::user_role,
+  COALESCE(au.raw_user_meta_data->>'role', 'mother'),
   COALESCE(au.raw_user_meta_data->>'display_name', SPLIT_PART(COALESCE(au.raw_user_meta_data->>'full_name', 'User'), ' ', 1)),
-  COALESCE((au.raw_user_meta_data->>'language_preference')::text, 'ar')::language_preference,
+  COALESCE(au.raw_user_meta_data->>'language_preference', 'ar'),
   false
 FROM auth.users au
 LEFT JOIN public.users pu ON au.id = pu.id

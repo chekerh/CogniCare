@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { signIn } from '../../lib/auth';
 import { LogIn } from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { validateEmail } from '../../lib/validation';
 
 interface LoginFormProps {
@@ -15,6 +16,7 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess } = useToast();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,10 +42,10 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
       if (result?.user) {
         // Wait a bit for auth state to propagate
         await new Promise(resolve => setTimeout(resolve, 500));
-        showSuccess('تم تسجيل الدخول بنجاح');
+      showSuccess('تم تسجيل الدخول بنجاح');
         // Give time for AuthContext to update
         setTimeout(() => {
-          onSuccess();
+      onSuccess();
         }, 300);
       } else {
         throw new Error('فشل تسجيل الدخول - لم يتم إنشاء جلسة');
@@ -57,10 +59,10 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-8" role="main" aria-labelledby="login-title">
+    <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-lg shadow-lg p-8" role="main" aria-labelledby="login-title">
       <div className="flex items-center justify-center mb-6">
         <LogIn className="w-8 h-8 text-teal-600 mr-2" aria-hidden="true" />
-        <h2 id="login-title" className="text-2xl font-bold text-gray-800">تسجيل الدخول</h2>
+        <h2 id="login-title" className="text-2xl font-bold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark">{t('auth.login')}</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4" aria-label="نموذج تسجيل الدخول" noValidate>
@@ -71,8 +73,8 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            البريد الإلكتروني
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-1">
+            {t('auth.email')}
           </label>
           <input
             id="email"
@@ -80,14 +82,14 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
             placeholder="email@example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            كلمة المرور
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-1">
+            {t('auth.password')}
           </label>
           <input
             id="password"
@@ -95,7 +97,7 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
             placeholder="••••••••"
           />
         </div>
@@ -103,7 +105,7 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="w-full bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark py-2 px-4 rounded-md hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow"
           aria-label={loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
         >
           {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
@@ -111,14 +113,14 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-gray-600 text-sm">
-          ليس لديك حساب؟{' '}
+        <p className="text-gray-600 dark:text-gray-300 pooh:text-pooh-brown text-sm">
+          {t('auth.noAccount')}{' '}
           <button
             onClick={onSwitchToSignup}
-            className="text-teal-600 hover:text-teal-700 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 rounded"
-            aria-label="الانتقال إلى صفحة إنشاء حساب جديد"
+            className="text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark hover:text-teal-700 dark:hover:text-teal-500 pooh:hover:text-pooh-yellow font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 rounded"
+            aria-label={t('auth.signup')}
           >
-            إنشاء حساب جديد
+            {t('auth.signup')}
           </button>
         </p>
       </div>

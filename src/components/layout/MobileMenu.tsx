@@ -1,35 +1,27 @@
-import { X, Home, Users, BookOpen, Gamepad2, User, Shield, MessageCircle, Users2, Film, BarChart3, Video } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { X } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
+
+interface NavItem {
+  id: string;
+  icon: React.ComponentType<{ className?: string }>;
+  labelKey: string;
+  roles: string[];
+}
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   currentView: string;
   onViewChange: (view: string) => void;
+  navItems: NavItem[];
 }
 
-export function MobileMenu({ isOpen, onClose, currentView, onViewChange }: MobileMenuProps) {
-  const { user } = useAuth();
+export function MobileMenu({ isOpen, onClose, currentView, onViewChange, navItems }: MobileMenuProps) {
   const { t } = useLanguage();
 
   if (!isOpen) return null;
 
-  const navItems = [
-    { id: 'feed', icon: Home, labelKey: 'nav.home', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
-    { id: 'directory', icon: Users, labelKey: 'nav.directory', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
-    { id: 'messages', icon: MessageCircle, labelKey: 'nav.messages', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
-    { id: 'groups', icon: Users2, labelKey: 'nav.groups', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
-    { id: 'reels', icon: Film, labelKey: 'nav.reels', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
-    { id: 'children', icon: BookOpen, labelKey: 'nav.children', roles: ['mother'] },
-    { id: 'games', icon: Gamepad2, labelKey: 'nav.games', roles: ['mother'] },
-    { id: 'dashboard', icon: BarChart3, labelKey: 'nav.dashboard', roles: ['mother'] },
-    { id: 'consultations', icon: Video, labelKey: 'nav.consultations', roles: ['mother', 'specialist'] },
-    { id: 'profile', icon: User, labelKey: 'nav.profile', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
-    { id: 'admin', icon: Shield, labelKey: 'nav.admin', roles: ['admin'] },
-  ];
-
-  const availableNavItems = navItems.filter(item => item.roles.includes(user?.role || ''));
+  const availableNavItems = navItems;
 
   const handleNavClick = (view: string) => {
     onViewChange(view);

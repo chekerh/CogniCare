@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { supabase, Consultation, User, Child } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Calendar, Video, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 import { BookConsultationModal } from './BookConsultationModal';
 
 export function ConsultationsManager() {
   const { user } = useAuth();
+  const { language, t } = useLanguage();
   const [consultations, setConsultations] = useState<(Consultation & { specialist: User; child: Child | null })[]>([]);
   const [loading, setLoading] = useState(true);
   const [showBookModal, setShowBookModal] = useState(false);
@@ -134,27 +136,27 @@ export function ConsultationsManager() {
                       }`}
                     >
                       {consultation.status === 'pending'
-                        ? 'قيد الانتظار'
+                        ? t('consultations.status.pending')
                         : consultation.status === 'confirmed'
-                        ? 'مؤكد'
+                        ? t('consultations.status.confirmed')
                         : consultation.status === 'completed'
-                        ? 'مكتمل'
-                        : 'ملغي'}
+                        ? t('consultations.status.completed')
+                        : t('consultations.status.cancelled')}
                     </span>
                   </div>
 
                   <div className="space-y-2 text-sm text-gray-600">
                     <div className="flex items-center space-x-2 space-x-reverse">
                       <Calendar className="w-4 h-4" />
-                      <span>{formatDate(consultation.scheduled_at)}</span>
+                      <span>{formatDate(consultation.scheduled_at, language)}</span>
                     </div>
                     <div className="flex items-center space-x-2 space-x-reverse">
                       <Clock className="w-4 h-4" />
-                      <span>{consultation.duration_minutes} دقيقة</span>
+                      <span>{consultation.duration_minutes} {t('consultations.minutes')}</span>
                     </div>
                     {consultation.child && (
                       <div>
-                        <span className="font-medium">الطفل:</span> {consultation.child.name}
+                        <span className="font-medium">{t('consultations.child')}:</span> {consultation.child.name}
                       </div>
                     )}
                   </div>

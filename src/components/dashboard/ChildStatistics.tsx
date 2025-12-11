@@ -18,7 +18,7 @@ const COLORS = {
 };
 
 export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [sessions, setSessions] = useState<GameSession[]>([]);
   const [reports, setReports] = useState<AIReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,9 +110,10 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
 
       const report = reports.find(r => r.session_id === session.id);
 
+      const locale = language === 'ar' ? 'ar-TN' : language === 'fr' ? 'fr-FR' : 'en-US';
       return {
-        name: `جلسة ${index + 1}`,
-        date: new Date(session.created_at).toLocaleDateString('ar'),
+        name: `${t('dashboard.session')} ${index + 1}`,
+        date: new Date(session.created_at).toLocaleDateString(locale),
         reactionTime: avgReactionTime,
         accuracy: session.accuracy,
         completionTime: session.duration_seconds,
@@ -151,7 +152,7 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">جاري التحميل...</div>
+        <div className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">{t('dashboard.loading')}</div>
       </div>
     );
   }
@@ -160,7 +161,7 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
     return (
       <div className="text-center p-8">
         <p className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
-          لا توجد بيانات إحصائية بعد. العب بعض الألعاب لبدء تتبع التقدم.
+          {t('dashboard.noData')}
         </p>
       </div>
     );
@@ -177,14 +178,14 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
                 onClick={onBack}
                 className="mb-4 text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark hover:text-teal-700 dark:hover:text-teal-300 pooh:hover:text-pooh-yellow text-sm"
               >
-                ← العودة
+                {t('dashboard.back')}
               </button>
             )}
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">
-              إحصائيات {child.name}
+              {t('dashboard.statistics')} {child.name}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">
-              {metrics.totalSessions} جلسة • {reports.length} تقرير
+              {metrics.totalSessions} {t('dashboard.session')} • {reports.length} {t('dashboard.report')}
             </p>
           </div>
         </div>
@@ -193,35 +194,35 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
       {/* Metrics Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <MetricCard
-          title="متوسط وقت رد الفعل"
+          title={t('dashboard.avgReactionTime')}
           value={`${(metrics.avgReactionTime / 1000).toFixed(1)}s`}
           icon={Zap}
           color={getMetricColor(metrics.avgReactionTime, 'reaction')}
           trend={null}
         />
         <MetricCard
-          title="متوسط الدقة"
+          title={t('dashboard.avgAccuracy')}
           value={`${metrics.avgAccuracy.toFixed(1)}%`}
           icon={Target}
           color={getMetricColor(metrics.avgAccuracy, 'accuracy')}
           trend={metrics.accuracyTrend}
         />
         <MetricCard
-          title="متوسط وقت الإتمام"
+          title={t('dashboard.avgCompletionTime')}
           value={`${Math.floor(metrics.avgCompletionTime / 60)}:${String(Math.floor(metrics.avgCompletionTime % 60)).padStart(2, '0')}`}
           icon={Clock}
           color={getMetricColor(metrics.avgCompletionTime, 'completion')}
           trend={null}
         />
         <MetricCard
-          title="متوسط النقاط"
+          title={t('dashboard.avgScore')}
           value={metrics.avgScore.toFixed(0)}
           icon={Award}
           color={getMetricColor(metrics.avgScore, 'score')}
           trend={null}
         />
         <MetricCard
-          title="متوسط الانخراط"
+          title={t('dashboard.avgEngagement')}
           value={`${metrics.avgEngagement.toFixed(1)}%`}
           icon={TrendingUp}
           color={getMetricColor(metrics.avgEngagement, 'engagement')}
@@ -232,7 +233,7 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
       {/* Metric Selector */}
       <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">
-          اختر المقياس لعرض الاتجاه
+          {t('dashboard.selectMetric')}
         </h3>
         <div className="flex flex-wrap gap-2">
           {(['reaction', 'accuracy', 'completion', 'score', 'engagement'] as const).map((metric) => (
@@ -245,11 +246,11 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
                   : 'bg-gray-100 dark:bg-gray-700 pooh:bg-pooh-cream text-gray-700 dark:text-gray-300 pooh:text-pooh-brown hover:bg-gray-200 dark:hover:bg-gray-600 pooh:hover:bg-pooh-yellow-light'
               }`}
             >
-              {metric === 'reaction' && 'وقت رد الفعل'}
-              {metric === 'accuracy' && 'الدقة'}
-              {metric === 'completion' && 'وقت الإتمام'}
-              {metric === 'score' && 'النقاط'}
-              {metric === 'engagement' && 'الانخراط'}
+              {metric === 'reaction' && t('dashboard.reactionTime')}
+              {metric === 'accuracy' && t('dashboard.accuracy')}
+              {metric === 'completion' && t('dashboard.completionTime')}
+              {metric === 'score' && t('dashboard.score')}
+              {metric === 'engagement' && t('dashboard.engagement')}
             </button>
           ))}
         </div>
@@ -258,7 +259,7 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
       {/* Trend Chart */}
       <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">
-          الاتجاه عبر الوقت
+          {t('dashboard.trendOverTime')}
         </h3>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={chartData}>
@@ -292,11 +293,11 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
               stroke={COLORS.primary}
               strokeWidth={2}
               name={
-                selectedMetric === 'reaction' ? 'وقت رد الفعل (ms)' :
-                selectedMetric === 'accuracy' ? 'الدقة (%)' :
-                selectedMetric === 'completion' ? 'وقت الإتمام (ثانية)' :
-                selectedMetric === 'score' ? 'النقاط' :
-                'الانخراط (%)'
+                selectedMetric === 'reaction' ? t('dashboard.reactionTimeMs') :
+                selectedMetric === 'accuracy' ? t('dashboard.accuracyPercent') :
+                selectedMetric === 'completion' ? t('dashboard.completionTimeSeconds') :
+                selectedMetric === 'score' ? t('dashboard.score') :
+                t('dashboard.engagementPercent')
               }
             />
           </LineChart>
@@ -307,17 +308,17 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
       {sessions.length >= 6 && (
         <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">
-            مقارنة الجلسات الأخيرة
+            {t('dashboard.recentSessionsComparison')}
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={[
               {
-                name: 'الجلسات الثلاث السابقة',
+                name: t('dashboard.previousThreeSessions'),
                 accuracy: sessions.slice(-6, -3).reduce((sum, s) => sum + s.accuracy, 0) / 3,
                 engagement: reports.slice(-6, -3).reduce((sum, r) => sum + r.engagement_score, 0) / 3,
               },
               {
-                name: 'الجلسات الثلاث الأخيرة',
+                name: t('dashboard.lastThreeSessions'),
                 accuracy: sessions.slice(-3).reduce((sum, s) => sum + s.accuracy, 0) / 3,
                 engagement: reports.slice(-3).reduce((sum, r) => sum + r.engagement_score, 0) / 3,
               },
@@ -327,8 +328,8 @@ export function ChildStatistics({ child, onBack }: ChildStatisticsProps) {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="accuracy" fill={COLORS.primary} name="الدقة (%)" />
-              <Bar dataKey="engagement" fill={COLORS.secondary} name="الانخراط (%)" />
+              <Bar dataKey="accuracy" fill={COLORS.primary} name={t('dashboard.accuracyPercent')} />
+              <Bar dataKey="engagement" fill={COLORS.secondary} name={t('dashboard.engagementPercent')} />
             </BarChart>
           </ResponsiveContainer>
         </div>

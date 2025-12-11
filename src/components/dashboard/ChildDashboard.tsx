@@ -4,6 +4,7 @@ import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { Trophy, TrendingUp, Calendar, Download, BarChart3 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { ChildStatistics } from './ChildStatistics';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface ChildDashboardProps {
   child: Child;
@@ -13,6 +14,7 @@ interface ChildDashboardProps {
 const COLORS = ['#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
+  const { t, language } = useLanguage();
   const [sessions, setSessions] = useState<GameSession[]>([]);
   const [reports, setReports] = useState<AIReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,8 +71,8 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
     if (streak > 0) {
       achievements.push({
         id: 'streak',
-        title: `سلسلة ${streak} يوم`,
-        description: 'لعب متواصل',
+        title: `${t('dashboard.streak')} ${streak} ${t('dashboard.days')}`,
+        description: t('dashboard.continuousPlay'),
         icon: Calendar,
         color: 'bg-yellow-500',
       });
@@ -81,8 +83,8 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
     if (avgAccuracy >= 90) {
       achievements.push({
         id: 'accuracy',
-        title: 'دقة عالية',
-        description: `متوسط ${avgAccuracy.toFixed(0)}%`,
+        title: t('dashboard.highAccuracy'),
+        description: `${t('dashboard.average')} ${avgAccuracy.toFixed(0)}%`,
         icon: TrendingUp,
         color: 'bg-green-500',
       });
@@ -93,8 +95,8 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
     if (avgEngagement >= 80) {
       achievements.push({
         id: 'engagement',
-        title: 'انخراط ممتاز',
-        description: `متوسط ${avgEngagement.toFixed(0)}%`,
+        title: t('dashboard.excellentEngagement'),
+        description: `${t('dashboard.average')} ${avgEngagement.toFixed(0)}%`,
         icon: Trophy,
         color: 'bg-purple-500',
       });
@@ -104,12 +106,13 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
   };
 
   const prepareChartData = () => {
+    const locale = language === 'ar' ? 'ar-TN' : language === 'fr' ? 'fr-FR' : 'en-US';
     return sessions.map((session, index) => ({
-      name: `جلسة ${index + 1}`,
+      name: `${t('dashboard.session')} ${index + 1}`,
       accuracy: session.accuracy,
       score: session.score,
       engagement: reports[index]?.engagement_score || 0,
-      date: new Date(session.created_at).toLocaleDateString('ar'),
+      date: new Date(session.created_at).toLocaleDateString(locale),
     }));
   };
 
@@ -131,23 +134,23 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
   const exportPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(20);
-    doc.text(`تقرير تقدم ${child.name}`, 105, 20, { align: 'center' });
+    doc.text(`${t('dashboard.progressReport')} ${child.name}`, 105, 20, { align: 'center' });
 
     let y = 40;
     doc.setFontSize(12);
-    doc.text(`عدد الجلسات: ${sessions.length}`, 20, y);
+    doc.text(`${t('dashboard.totalSessions')}: ${sessions.length}`, 20, y);
     y += 10;
-    doc.text(`متوسط الدقة: ${(sessions.reduce((s, a) => s + a.accuracy, 0) / sessions.length).toFixed(1)}%`, 20, y);
+    doc.text(`${t('dashboard.avgAccuracy')}: ${(sessions.reduce((s, a) => s + a.accuracy, 0) / sessions.length).toFixed(1)}%`, 20, y);
     y += 10;
-    doc.text(`متوسط الانخراط: ${(reports.reduce((s, a) => s + a.engagement_score, 0) / reports.length).toFixed(1)}%`, 20, y);
+    doc.text(`${t('dashboard.avgEngagement')}: ${(reports.reduce((s, a) => s + a.engagement_score, 0) / reports.length).toFixed(1)}%`, 20, y);
 
-    doc.save(`تقرير_${child.name}_${Date.now()}.pdf`);
+    doc.save(`${t('dashboard.progressReport')}_${child.name}_${Date.now()}.pdf`);
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">جاري التحميل...</div>
+        <div className="text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">{t('dashboard.loading')}</div>
       </div>
     );
   }
@@ -170,12 +173,12 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
                 onClick={onBack}
                 className="mb-4 text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark hover:text-teal-700 dark:hover:text-teal-300 pooh:hover:text-pooh-yellow text-sm"
               >
-                ← العودة
+                {t('dashboard.back')}
               </button>
             )}
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">لوحة تقدم {child.name}</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">{t('dashboard.progressBoard')} {child.name}</h2>
             <p className="text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">
-              {sessions.length} جلسة • {reports.length} تقرير AI
+              {sessions.length} {t('dashboard.sessions')} • {reports.length} {t('dashboard.aiReports')}
             </p>
           </div>
           <div className="flex items-center space-x-2 space-x-reverse">
@@ -184,14 +187,14 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
               className="flex items-center space-x-2 space-x-reverse bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark px-4 py-2 rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors"
             >
               <BarChart3 className="w-5 h-5" />
-              <span>إحصائيات مفصلة</span>
+              <span>{t('dashboard.detailedStats')}</span>
             </button>
           <button
             onClick={exportPDF}
               className="flex items-center space-x-2 space-x-reverse bg-gray-600 dark:bg-gray-500 pooh:bg-pooh-burlywood text-white dark:text-gray-900 pooh:text-pooh-brown-dark px-4 py-2 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 pooh:hover:bg-pooh-yellow transition-colors"
           >
             <Download className="w-5 h-5" />
-            <span>تصدير PDF</span>
+            <span>{t('dashboard.exportPDF')}</span>
           </button>
           </div>
         </div>
@@ -200,7 +203,7 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
       {/* Achievements */}
       {achievements.length > 0 && (
         <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">الإنجازات</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('dashboard.achievements')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {achievements.map((achievement) => (
               <div
@@ -220,7 +223,7 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Accuracy Over Time */}
         <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">الدقة عبر الوقت</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('dashboard.accuracyOverTime')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -235,7 +238,7 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
 
         {/* Engagement Over Time */}
         <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">الانخراط عبر الوقت</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('dashboard.engagementOverTime')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -250,7 +253,7 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
 
         {/* Score Distribution */}
         <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">توزيع النقاط</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('dashboard.scoreDistribution')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -266,7 +269,7 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
         {/* Emotion Distribution */}
         {emotionData.length > 0 && (
           <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">توزيع المشاعر</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('dashboard.emotionDistribution')}</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
@@ -292,7 +295,7 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
 
       {/* Recent Sessions */}
       <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">الجلسات الأخيرة</h3>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-4">{t('dashboard.recentSessions')}</h3>
         <div className="space-y-4">
           {sessions.slice(-5).reverse().map((session) => {
             const report = reports.find((r) => r.session_id === session.id);
@@ -302,14 +305,14 @@ export function ChildDashboard({ child, onBack }: ChildDashboardProps) {
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{session.game_type}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">
-                      {new Date(session.created_at).toLocaleDateString('ar')}
+                      {new Date(session.created_at).toLocaleDateString(language === 'ar' ? 'ar-TN' : language === 'fr' ? 'fr-FR' : 'en-US')}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark">الدقة: {session.accuracy.toFixed(1)}%</p>
+                    <p className="font-bold text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark">{t('dashboard.accuracy')}: {session.accuracy.toFixed(1)}%</p>
                     {report && (
                       <p className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">
-                        الانخراط: {report.engagement_score.toFixed(1)}%
+                        {t('dashboard.engagement')}: {report.engagement_score.toFixed(1)}%
                       </p>
                     )}
                   </div>

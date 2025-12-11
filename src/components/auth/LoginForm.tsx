@@ -24,14 +24,16 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
 
     // Validation
     if (!validateEmail(email)) {
-      setError('البريد الإلكتروني غير صحيح');
-      showError('البريد الإلكتروني غير صحيح');
+      const errorMsg = t('auth.invalidEmail');
+      setError(errorMsg);
+      showError(errorMsg);
       return;
     }
 
     if (password.length < 8) {
-      setError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
-      showError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+      const errorMsg = t('auth.passwordTooShort');
+      setError(errorMsg);
+      showError(errorMsg);
       return;
     }
 
@@ -40,18 +42,16 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
     try {
       const result = await signIn(email, password);
       if (result?.user) {
-        // Wait a bit for auth state to propagate
-        await new Promise(resolve => setTimeout(resolve, 500));
-      showSuccess('تم تسجيل الدخول بنجاح');
-        // Give time for AuthContext to update
-        setTimeout(() => {
-      onSuccess();
-        }, 300);
+        showSuccess('تم تسجيل الدخول بنجاح');
+        // Don't wait - let AuthContext handle the state update
+        // The auth state change event will trigger user fetch
+        // Just call onSuccess immediately, AuthContext will update when ready
+        onSuccess();
       } else {
-        throw new Error('فشل تسجيل الدخول - لم يتم إنشاء جلسة');
+        throw new Error(t('auth.loginFailed'));
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'فشل تسجيل الدخول';
+      const errorMessage = err instanceof Error ? err.message : t('auth.loginFailed');
       setError(errorMessage);
       showError(errorMessage);
       setLoading(false);
@@ -67,7 +67,7 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-4" aria-label="نموذج تسجيل الدخول" noValidate>
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm" role="alert" aria-live="assertive">
+          <div className="bg-red-50 dark:bg-red-900/20 pooh:bg-red-50 text-red-600 dark:text-red-400 pooh:text-red-600 p-3 rounded-md text-sm" role="alert" aria-live="assertive">
             {error}
           </div>
         )}
@@ -106,9 +106,9 @@ export function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
           type="submit"
           disabled={loading}
           className="w-full bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark py-2 px-4 rounded-md hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow"
-          aria-label={loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+          aria-label={loading ? t('auth.loggingIn') : t('auth.login')}
         >
-          {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+          {loading ? t('auth.loggingIn') : t('auth.login')}
         </button>
       </form>
 

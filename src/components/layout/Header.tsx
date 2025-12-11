@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import { LogOut, Home, Users, BookOpen, Gamepad2, User, Shield, MessageCircle, Users2, Video, BarChart3, Film, Menu } from 'lucide-react';
+import { LogOut, Home, Users, BookOpen, Gamepad2, User, Shield, MessageCircle, Users2, Video, Film, Menu } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { useTheme } from '../../contexts/ThemeContext';
 import { signOut } from '../../lib/auth';
 import { NotificationsBell } from '../notifications/NotificationsBell';
 import { MobileMenu } from './MobileMenu';
-import { ThemeSwitcher } from '../common/ThemeSwitcher';
-import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 interface HeaderProps {
   currentView: string;
@@ -17,7 +14,6 @@ interface HeaderProps {
 export function Header({ currentView, onViewChange }: HeaderProps) {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { theme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -31,7 +27,16 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
 
   if (!user) return null;
 
-  const navItems = [
+  // Essential topbar items only (always visible)
+  const topbarItems = [
+    { id: 'feed', icon: Home, labelKey: 'nav.home', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
+    { id: 'messages', icon: MessageCircle, labelKey: 'nav.messages', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
+    { id: 'games', icon: Gamepad2, labelKey: 'nav.games', roles: ['mother'] },
+    { id: 'profile', icon: User, labelKey: 'nav.profile', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
+  ];
+
+  // All navigation items (for mobile menu)
+  const allNavItems = [
     { id: 'feed', icon: Home, labelKey: 'nav.home', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
     { id: 'directory', icon: Users, labelKey: 'nav.directory', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
     { id: 'messages', icon: MessageCircle, labelKey: 'nav.messages', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
@@ -39,13 +44,13 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
     { id: 'reels', icon: Film, labelKey: 'nav.reels', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
     { id: 'children', icon: BookOpen, labelKey: 'nav.children', roles: ['mother'] },
     { id: 'games', icon: Gamepad2, labelKey: 'nav.games', roles: ['mother'] },
-    { id: 'dashboard', icon: BarChart3, labelKey: 'nav.dashboard', roles: ['mother'] },
     { id: 'consultations', icon: Video, labelKey: 'nav.consultations', roles: ['mother', 'specialist'] },
     { id: 'profile', icon: User, labelKey: 'nav.profile', roles: ['mother', 'specialist', 'volunteer', 'admin'] },
     { id: 'admin', icon: Shield, labelKey: 'nav.admin', roles: ['admin'] },
   ];
 
-  const availableNavItems = navItems.filter(item => item.roles.includes(user.role));
+  const availableTopbarItems = topbarItems.filter(item => item.roles.includes(user.role));
+  const availableNavItems = allNavItems.filter(item => item.roles.includes(user.role));
 
   return (
     <>
@@ -67,8 +72,8 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
                   Cognicare
                 </a>
               </h1>
-              <nav className="hidden md:flex space-x-4 space-x-reverse" role="navigation" aria-label={t('nav.home')}>
-              {availableNavItems.map(({ id, icon: Icon, labelKey }) => {
+              <nav className="hidden md:flex space-x-2 space-x-reverse" role="navigation" aria-label={t('nav.home')}>
+              {availableTopbarItems.map(({ id, icon: Icon, labelKey }) => {
                 const label = t(labelKey);
                 return (
                 <button
@@ -83,37 +88,38 @@ export function Header({ currentView, onViewChange }: HeaderProps) {
                   aria-label={label}
                 >
                   <Icon className="w-4 h-4" aria-hidden="true" />
-                  <span>{label}</span>
+                  <span className="hidden lg:inline">{label}</span>
                 </button>
               )})}
             </nav>
           </div>
 
-          <div className="flex items-center space-x-4 space-x-reverse">
-            <NotificationsBell />
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{user.display_name || user.full_name}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
-                {user.role === 'mother' ? t('role.mother') : user.role === 'specialist' ? t('role.specialist') : user.role === 'volunteer' ? t('role.volunteer') : t('role.admin')}
-              </p>
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <NotificationsBell />
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{user.display_name || user.full_name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
+                  {user.role === 'mother' ? t('role.mother') : user.role === 'specialist' ? t('role.specialist') : user.role === 'volunteer' ? t('role.volunteer') : t('role.admin')}
+                </p>
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="p-2 text-gray-600 dark:text-gray-300 pooh:text-pooh-brown hover:text-red-600 dark:hover:text-red-400 pooh:hover:text-pooh-red hover:bg-red-50 dark:hover:bg-red-900/20 pooh:hover:bg-pooh-red/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+                title={t('auth.logout')}
+                aria-label={t('auth.logout')}
+              >
+                <LogOut className="w-5 h-5" aria-hidden="true" />
+              </button>
             </div>
-            <button
-              onClick={handleSignOut}
-              className="p-2 text-gray-600 dark:text-gray-300 pooh:text-pooh-brown hover:text-red-600 dark:hover:text-red-400 pooh:hover:text-pooh-red hover:bg-red-50 dark:hover:bg-red-900/20 pooh:hover:bg-pooh-red/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
-              title={t('auth.logout')}
-              aria-label={t('auth.logout')}
-            >
-              <LogOut className="w-5 h-5" aria-hidden="true" />
-            </button>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
     <MobileMenu
       isOpen={mobileMenuOpen}
       onClose={() => setMobileMenuOpen(false)}
       currentView={currentView}
       onViewChange={onViewChange}
+      navItems={availableNavItems}
     />
     </>
   );

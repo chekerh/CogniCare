@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, Post, User, Comment } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Heart, MessageCircle, Flag } from 'lucide-react';
 import { formatDistanceToNow } from '../utils/formatDate';
 
@@ -11,6 +12,7 @@ interface PostCardProps {
 
 export function PostCard({ post, onUpdate }: PostCardProps) {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<(Comment & { author: User })[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -103,7 +105,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
                 {post.author.display_name || post.author.full_name}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
-                {formatDistanceToNow(post.created_at)}
+                {formatDistanceToNow(post.created_at, language)}
               </p>
             </div>
             <button className="text-gray-400 dark:text-gray-500 pooh:text-pooh-brown hover:text-red-500 dark:hover:text-red-400 pooh:hover:text-pooh-red transition-colors">
@@ -162,7 +164,7 @@ export function PostCard({ post, onUpdate }: PostCardProps) {
                           {comment.content}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown mt-1">
-                          {formatDistanceToNow(comment.created_at)}
+                          {formatDistanceToNow(comment.created_at, language)}
                         </p>
                       </div>
                     </div>

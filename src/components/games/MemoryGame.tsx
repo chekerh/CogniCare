@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase, Child } from '../../lib/supabase';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { X, Star, Camera, CameraOff } from 'lucide-react';
 import { analyzeFrame, finalizeSession, calculateFallbackMetrics, FrameAnalysis } from '../../lib/ai';
 
@@ -11,6 +12,7 @@ interface MemoryGameProps {
 const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
 
 export function MemoryGame({ child, onExit }: MemoryGameProps) {
+  const { t } = useLanguage();
   const [cards, setCards] = useState<{ id: number; emoji: string; flipped: boolean; matched: boolean }[]>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
@@ -119,18 +121,30 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
     ));
 
     if (newFlippedCards.length === 2) {
-      setMoves(moves + 1);
       const [first, second] = newFlippedCards;
+      const newMoves = moves + 1;
+      setMoves(newMoves);
 
       if (cards[first].emoji === cards[second].emoji) {
         setTimeout(() => {
-          setCards(prev => prev.map(card =>
-            card.id === first || card.id === second
-              ? { ...card, matched: true }
-              : card
-          ));
+          setCards(prev => {
+            const updated = prev.map(card =>
+              card.id === first || card.id === second
+                ? { ...card, matched: true }
+                : card
+            );
+            // Check if all are matched after update
+            const allMatched = updated.every(card => card.matched);
+            if (allMatched) {
+              const duration = Math.floor((Date.now() - startTime) / 1000);
+              const calculatedScore = Math.max(100 - newMoves * 5, 0);
+              setScore(calculatedScore);
+              setGameComplete(true);
+              saveGameSession(duration, calculatedScore, newMoves);
+            }
+            return updated;
+          });
           setFlippedCards([]);
-          checkGameComplete();
         }, 500);
       } else {
         setTimeout(() => {
@@ -145,23 +159,11 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
     }
   };
 
-  const checkGameComplete = () => {
-    setTimeout(() => {
-      const allMatched = cards.every(card => card.matched);
-      if (allMatched) {
-        const duration = Math.floor((Date.now() - startTime) / 1000);
-        const calculatedScore = Math.max(100 - moves * 5, 0);
-        setScore(calculatedScore);
-        setGameComplete(true);
-        saveGameSession(duration, calculatedScore);
-      }
-    }, 100);
-  };
 
-  const saveGameSession = async (duration: number, finalScore: number) => {
+  const saveGameSession = async (duration: number, finalScore: number, finalMoves: number) => {
     try {
-      const accuracy = ((cards.length / 2) / moves) * 100;
-      const errors = moves - (cards.length / 2);
+      const accuracy = finalMoves > 0 ? ((cards.length / 2) / finalMoves) * 100 : 0;
+      const errors = finalMoves - (cards.length / 2);
 
       // Always use metrics-based analysis (primary method)
       // Optionally enhance with camera data if available
@@ -207,7 +209,7 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
           score: finalScore,
           accuracy: Math.min(accuracy, 100),
           metrics: {
-            moves,
+            moves: finalMoves,
             pairs: cards.length / 2,
             reaction_times: reactionTimes,
             avg_reaction_time: reactionTimes.length > 0 
@@ -320,7 +322,7 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
                 ? 'bg-green-100 dark:bg-green-900/30 pooh:bg-pooh-yellow-light text-green-700 dark:text-green-300 pooh:text-pooh-brown-dark'
                 : 'bg-gray-100 dark:bg-gray-700 pooh:bg-pooh-burlywood text-gray-600 dark:text-gray-300 pooh:text-pooh-brown'
             } hover:bg-opacity-80 transition-colors`}
-            title={cameraEnabled ? 'إيقاف الكاميرا' : 'تفعيل الكاميرا للتحليل'}
+            title={cameraEnabled ? t('games.disableCamera') : t('games.enableCamera')}
           >
             {cameraEnabled ? (
               <Camera className="w-5 h-5" />
@@ -346,10 +348,10 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
 
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">لعبة الذاكرة</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">المحاولات: {moves}</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark">{t('games.memoryGame')}</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">{t('games.attempts')}: {moves}</p>
             {cameraEnabled && (
-              <p className="text-xs text-green-600 dark:text-green-400 pooh:text-pooh-yellow-dark mt-1">✓ التحليل بالذكاء الاصطناعي مفعل</p>
+              <p className="text-xs text-green-600 dark:text-green-400 pooh:text-pooh-yellow-dark mt-1">✓ {t('games.aiAnalysisEnabled')}</p>
             )}
           </div>
           <button
@@ -361,13 +363,14 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
         </div>
 
         {gameComplete ? (
-          <div className="text-center py-12">
-            <div className="w-20 h-20 bg-yellow-100 dark:bg-yellow-900/30 pooh:bg-pooh-yellow-light rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="text-center py-12 animate-fade-in">
+            <div className="w-20 h-20 bg-yellow-100 dark:bg-yellow-900/30 pooh:bg-pooh-yellow-light rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
               <Star className="w-12 h-12 text-yellow-500 dark:text-yellow-400 pooh:text-pooh-yellow-dark fill-current" />
             </div>
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">أحسنت يا {child.name}!</h3>
-            <p className="text-lg text-gray-600 dark:text-gray-300 pooh:text-pooh-brown mb-2">أكملت اللعبة في {moves} محاولة</p>
-            <p className="text-2xl font-bold text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark mb-6">النقاط: {score}</p>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">🎉 {t('games.congratulations')} {child.name}!</h3>
+            <p className="text-lg text-gray-600 dark:text-gray-300 pooh:text-pooh-brown mb-2">{t('games.completedIn')} {moves} {t('games.moves')}</p>
+            <p className="text-2xl font-bold text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark mb-6">{t('games.score')}: {score}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 pooh:text-pooh-brown mb-6">{t('games.sessionSaved')}</p>
             <div className="flex space-x-3 space-x-reverse justify-center">
               <button
                 onClick={() => {
@@ -377,17 +380,18 @@ export function MemoryGame({ child, onExit }: MemoryGameProps) {
                   setFlippedCards([]);
                   setFrames([]);
                   setReactionTimes([]);
+                  lastMoveTime.current = Date.now();
                   initializeGame();
                 }}
-                className="bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark px-6 py-2 rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors"
+                className="bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark px-6 py-2 rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors font-medium"
               >
-                العب مرة أخرى
+                {t('games.playAgain')}
               </button>
               <button
                 onClick={onExit}
-                className="bg-gray-200 dark:bg-gray-700 pooh:bg-pooh-burlywood text-gray-700 dark:text-gray-300 pooh:text-pooh-brown-dark px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 pooh:hover:bg-pooh-yellow transition-colors"
+                className="bg-gray-200 dark:bg-gray-700 pooh:bg-pooh-burlywood text-gray-700 dark:text-gray-300 pooh:text-pooh-brown-dark px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 pooh:hover:bg-pooh-yellow transition-colors font-medium"
               >
-                خروج
+                {t('games.viewDashboard')}
               </button>
             </div>
           </div>

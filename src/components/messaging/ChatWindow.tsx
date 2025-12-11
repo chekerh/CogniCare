@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase, Message, User, Conversation } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Send, X } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 import { encryptMessage, decryptMessage, getPrivateKey, deriveSharedSecret } from '../../lib/encryption';
@@ -12,6 +13,7 @@ interface ChatWindowProps {
 
 export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const [messages, setMessages] = useState<(Message & { sender: User })[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -247,7 +249,7 @@ export function ChatWindow({ conversation, onClose }: ChatWindowProps) {
                       : 'text-gray-500 dark:text-gray-400 pooh:text-pooh-brown'
                   }`}
                 >
-                  {formatDate(message.created_at)}
+                  {formatDate(message.created_at, language)}
                 </p>
               </div>
             </div>

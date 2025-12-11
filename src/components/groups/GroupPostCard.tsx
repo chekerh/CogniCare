@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, GroupPost, User } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 
@@ -11,6 +12,7 @@ interface GroupPostCardProps {
 
 export function GroupPostCard({ post, onUpdate }: GroupPostCardProps) {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const [userReaction, setUserReaction] = useState<string | null>(null);
 
   useEffect(() => {
@@ -75,7 +77,7 @@ export function GroupPostCard({ post, onUpdate }: GroupPostCardProps) {
         <div className="flex-1">
           <div className="flex items-center space-x-2 space-x-reverse">
             <h3 className="font-semibold text-gray-900">{post.author.full_name}</h3>
-            <span className="text-xs text-gray-500">{formatDate(post.created_at)}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">{formatDate(post.created_at, language)}</span>
           </div>
         </div>
       </div>

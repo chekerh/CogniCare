@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { validateName, validateAge, sanitizeInput } from '../../lib/validation';
 import { X } from 'lucide-react';
 
@@ -13,6 +14,7 @@ interface AddChildFormProps {
 export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
   const { user } = useAuth();
   const { showSuccess, showError } = useToast();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -47,14 +49,14 @@ export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
     // Validation
     const nameValidation = validateName(formData.name);
     if (!nameValidation.valid) {
-      showError(nameValidation.error || 'اسم غير صحيح');
+      showError(nameValidation.error || t('children.invalidName'));
       return;
     }
 
     const age = parseInt(formData.age);
     const ageValidation = validateAge(age);
     if (!ageValidation.valid) {
-      showError(ageValidation.error || 'عمر غير صحيح');
+      showError(ageValidation.error || t('children.invalidAge'));
       return;
     }
 
@@ -71,42 +73,42 @@ export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
 
       if (error) throw error;
       
-      showSuccess('تم إضافة الطفل بنجاح');
+      showSuccess(t('children.childAdded'));
       onSuccess();
     } catch (error) {
       console.error('Error adding child:', error);
-      showError('فشل إضافة الطفل. الرجاء المحاولة مرة أخرى.');
+      showError(t('children.addFailed'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-white dark:bg-gray-800 pooh:bg-pooh-surface">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-800">إضافة طفل جديد</h3>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark">{t('children.addChild')}</h3>
+        <button onClick={onClose} className="text-gray-400 dark:text-gray-500 pooh:text-pooh-brown hover:text-gray-600 dark:hover:text-gray-300 pooh:hover:text-pooh-brown-dark">
           <X className="w-6 h-6" />
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            اسم الطفل
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-1">
+            {t('children.childName')}
           </label>
           <input
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            العمر
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-1">
+            {t('children.age')}
           </label>
           <input
             type="number"
@@ -115,28 +117,28 @@ export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
             value={formData.age}
             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            الجنس
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-1">
+            {t('children.gender')}
           </label>
           <select
             value={formData.gender}
             onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
           >
-            <option value="male">ذكر</option>
-            <option value="female">أنثى</option>
-            <option value="other">آخر</option>
+            <option value="male">{t('children.genderMale')}</option>
+            <option value="female">{t('children.genderFemale')}</option>
+            <option value="other">{t('children.genderOther')}</option>
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            التشخيص
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-2">
+            {t('children.diagnosis')}
           </label>
           <div className="space-y-2">
             {diagnosisOptions.map((option) => (
@@ -145,24 +147,24 @@ export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
                   type="checkbox"
                   checked={formData.diagnosis.includes(option)}
                   onChange={() => toggleDiagnosis(option)}
-                  className="rounded text-teal-600 focus:ring-teal-500"
+                  className="rounded text-teal-600 dark:text-teal-400 pooh:text-pooh-yellow-dark focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow"
                 />
-                <span className="text-sm text-gray-700">{option}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300 pooh:text-pooh-brown">{option}</span>
               </label>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            المستوى التعليمي
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-1">
+            {t('children.educationLevel')}
           </label>
           <input
             type="text"
             value={formData.education_level}
             onChange={(e) => setFormData({ ...formData, education_level: e.target.value })}
-            placeholder="روضة، ابتدائي، إعدادي..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+            placeholder={t('children.educationPlaceholder')}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-md focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
           />
         </div>
 
@@ -170,16 +172,16 @@ export function AddChildForm({ onClose, onSuccess }: AddChildFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark py-2 px-4 rounded-md hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'جاري الإضافة...' : 'إضافة'}
+            {loading ? t('children.adding') : t('children.add')}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors"
+            className="flex-1 bg-gray-200 dark:bg-gray-700 pooh:bg-pooh-burlywood text-gray-700 dark:text-gray-300 pooh:text-pooh-brown-dark py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 pooh:hover:bg-pooh-yellow-light transition-colors"
           >
-            إلغاء
+            {t('common.cancel')}
           </button>
         </div>
       </form>

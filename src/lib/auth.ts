@@ -51,18 +51,40 @@ export async function signOut() {
 }
 
 export async function getCurrentUser(): Promise<User | null> {
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  try {
+    // Use getSession instead of getUser for faster response (cached)
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error('Error getting session:', sessionError);
+      return null;
+    }
 
-  if (!authUser) return null;
+    if (!session?.user) return null;
 
-  const { data: user, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', authUser.id)
-    .maybeSingle();
+    // Fetch user profile with optimized query
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', session.user.id)
+      .maybeSingle();
 
-  if (error) throw error;
-  return user;
+    if (error) {
+      // If it's a "not found" error, that's okay - user might not have profile yet
+      if (error.code === 'PGRST116') {
+        console.warn('User profile not found in database:', session.user.id);
+        return null;
+      }
+      console.error('Error fetching user profile:', error);
+      // Don't throw, return null to allow retry
+      return null;
+    }
+    
+    return user;
+  } catch (error) {
+    console.error('Unexpected error in getCurrentUser:', error);
+    return null;
+  }
 }
 
 export async function updateUserProfile(userId: string, updates: Partial<User>) {

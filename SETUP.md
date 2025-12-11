@@ -104,7 +104,19 @@ To prevent login issues, run this SQL fix:
 
 This creates an auto-trigger that creates user profiles when users sign up, preventing login issues.
 
-### Step 1.6: Verify Database Setup
+### Step 1.6: Customize Email Templates (Recommended)
+
+Improve the signup confirmation email:
+
+1. **Go to Authentication → Email Templates** in Supabase Dashboard
+2. **Select "Confirm signup" template**
+3. **Copy the template** from `EMAIL_TEMPLATES_GUIDE.md`
+4. **Paste and customize** as needed
+5. **Save** the template
+
+**📖 Complete guide: [EMAIL_TEMPLATES_GUIDE.md](./EMAIL_TEMPLATES_GUIDE.md)**
+
+### Step 1.7: Verify Database Setup
 
 1. **Go to Table Editor** in Supabase
 2. **Check these tables exist:**

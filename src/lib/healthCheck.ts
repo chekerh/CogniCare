@@ -93,13 +93,21 @@ class HealthChecker {
     return this.lastCheck;
   }
 
-  startPeriodicCheck(intervalMs: number = 60000) {
+  startPeriodicCheck(intervalMs: number = 60000, deferInitial: boolean = true) {
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
     }
 
-    // Initial check
-    this.checkHealth();
+    // Defer initial check to avoid blocking page load
+    if (deferInitial) {
+      // Run initial check after a delay
+      setTimeout(() => {
+        this.checkHealth();
+      }, 1000);
+    } else {
+      // Initial check immediately
+      this.checkHealth();
+    }
 
     // Periodic checks
     this.checkInterval = window.setInterval(() => {

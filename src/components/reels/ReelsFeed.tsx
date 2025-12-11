@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase, Reel, User } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Heart, MessageCircle, Share2, Play, Pause } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 
 export function ReelsFeed() {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const [reels, setReels] = useState<(Reel & { author: User; likeCount: number; isLiked: boolean })[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -199,7 +201,7 @@ export function ReelsFeed() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-white dark:text-gray-100 pooh:text-pooh-brown-dark">{reel.author.full_name}</h3>
-                        <p className="text-xs text-gray-300 dark:text-gray-400 pooh:text-pooh-brown">{formatDate(reel.created_at)}</p>
+                        <p className="text-xs text-gray-300 dark:text-gray-400 pooh:text-pooh-brown">{formatDate(reel.created_at, language)}</p>
                       </div>
                     </div>
                     {reel.caption && (

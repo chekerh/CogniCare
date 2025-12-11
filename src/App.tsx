@@ -1,7 +1,7 @@
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { LoginForm } from './components/auth/LoginForm';
@@ -12,7 +12,9 @@ import { HealthStatusIndicator } from './components/common/HealthStatus';
 import { ThemeSwitcher } from './components/common/ThemeSwitcher';
 import { LanguageSwitcher } from './components/common/LanguageSwitcher';
 import { Child } from './lib/supabase';
-import { Heart } from 'lucide-react';
+import { Heart, BarChart3 } from 'lucide-react';
+import { PoohIcon } from './components/common/PoohIcons';
+import { useTheme } from './contexts/ThemeContext';
 import { analytics } from './lib/analytics';
 import { healthChecker } from './lib/healthCheck';
 
@@ -65,24 +67,31 @@ const ParentChildStats = lazy(() =>
 
 function AppContentInner() {
   const { user, loading } = useAuth();
-  const { theme } = useTheme();
   const { direction, t } = useLanguage();
+  const { theme } = useTheme();
   const [authView, setAuthView] = useState<'login' | 'signup'>('login');
   const [currentView, setCurrentView] = useState('feed');
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
 
-  // Initialize analytics and health checks
+  // Initialize analytics and health checks - defer until after user loads
   useEffect(() => {
-    // Track page views
-    analytics.pageView(window.location.pathname);
+    // Only initialize after loading completes to avoid blocking initial render
+    if (!loading) {
+      // Track page views (non-blocking)
+      setTimeout(() => {
+        analytics.pageView(window.location.pathname);
+      }, 100);
 
-    // Start periodic health checks
-    healthChecker.startPeriodicCheck(60000); // Check every minute
+      // Start periodic health checks (defer initial check)
+      setTimeout(() => {
+        healthChecker.startPeriodicCheck(60000); // Check every minute
+      }, 2000); // Wait 2 seconds before first check
+    }
 
     return () => {
       healthChecker.stopPeriodicCheck();
     };
-  }, []);
+  }, [loading]);
 
   // Track view changes
   useEffect(() => {
@@ -110,13 +119,17 @@ function AppContentInner() {
         <div className="w-full max-w-6xl">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-full flex items-center justify-center">
-                <Heart className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 dark:from-teal-600 dark:to-cyan-700 pooh:bg-pooh-yellow-dark rounded-full flex items-center justify-center">
+                {theme === 'pooh' ? (
+                  <PoohIcon className="w-10 h-10" />
+                ) : (
+                  <Heart className="w-8 h-8 text-white dark:text-gray-100 pooh:text-pooh-brown-dark" />
+                )}
               </div>
             </div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark mb-2">Cognicare</h1>
             <p className="text-lg text-gray-600 dark:text-gray-300 pooh:text-pooh-brown">
-              منصة دعم شاملة لأمهات الأطفال ذوي الاحتياجات الخاصة
+              {t('app.tagline')}
             </p>
           </div>
 
@@ -133,7 +146,7 @@ function AppContentInner() {
           )}
 
           <div className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">
-            <p>منصة آمنة ومشفرة لحماية خصوصيتك وخصوصية أطفالك</p>
+            <p>{t('app.securityNote')}</p>
           </div>
         </div>
       </div>
@@ -150,7 +163,7 @@ function AppContentInner() {
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10" role="main">
         <Suspense fallback={<LoadingSkeleton />}>
-          {currentView === 'feed' && <CommunityFeed />}
+          {currentView === 'feed' && <CommunityFeed onViewChange={setCurrentView} />}
           {currentView === 'directory' && <SpecialistDirectory />}
           {currentView === 'children' && <ChildrenManager />}
           {currentView === 'games' && <GamesZone />}
@@ -205,6 +218,19 @@ function AppContentInner() {
                 <Suspense fallback={<LoadingSkeleton />}>
                   <ParentChildStats />
                 </Suspense>
+              )}
+
+              {/* Dashboard Link for Mothers */}
+              {user.role === 'mother' && (
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 pooh:border-pooh-burlywood">
+                  <button
+                    onClick={() => setCurrentView('dashboard')}
+                    className="w-full flex items-center justify-center space-x-2 space-x-reverse px-6 py-3 bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors shadow-md hover:shadow-lg"
+                  >
+                    <BarChart3 className="w-5 h-5" />
+                    <span className="font-semibold">{t('nav.dashboard')}</span>
+                  </button>
+                </div>
               )}
 
               {/* Theme and Language Settings */}

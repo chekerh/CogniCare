@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, Conversation, User } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { MessageCircle, Search, Plus } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 import { ChatWindow } from './ChatWindow';
@@ -9,6 +10,7 @@ import { getPrivateKey } from '../../lib/encryption';
 
 export function Inbox() {
   const { user } = useAuth();
+  const { language, t } = useLanguage();
   const [conversations, setConversations] = useState<(Conversation & { otherUser: User; unreadCount: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -198,10 +200,10 @@ export function Inbox() {
                     )}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-300 pooh:text-pooh-brown truncate mt-1">
-                    {conv.last_message_preview || 'لا توجد رسائل'}
+                    {conv.last_message_preview || t('messages.noMessages')}
                   </p>
                   <p className="text-xs text-gray-400 dark:text-gray-500 pooh:text-pooh-brown mt-1">
-                    {formatDate(conv.last_message_at)}
+                    {formatDate(conv.last_message_at, language)}
                   </p>
                 </div>
               </div>

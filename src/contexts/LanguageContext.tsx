@@ -35,21 +35,41 @@ function LanguageProviderInner({ children }: { children: ReactNode }) {
   }, [user?.language_preference]);
 
   useEffect(() => {
-    // Update HTML attributes
+    // Update HTML attributes (synchronous, fast)
     document.documentElement.setAttribute('lang', language);
     const direction = language === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.setAttribute('dir', direction);
     
-    // Save to localStorage
+    // Save to localStorage (synchronous, fast)
     localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
     
-    // Sync with user profile if logged in
+    // Sync with user profile if logged in (defer to avoid blocking)
+    // Only update if language actually changed from user's preference
     if (user && user.language_preference !== language) {
-      updateUserProfile(user.id, { language_preference: language })
-        .then(() => refreshUser())
-        .catch(console.error);
+      // Use a ref to track if we're already updating to prevent loops
+      let isUpdating = false;
+      const timeoutId = setTimeout(() => {
+        if (!isUpdating) {
+          isUpdating = true;
+          updateUserProfile(user.id, { language_preference: language })
+            .then(() => {
+              // Only refresh if still needed (user might have changed)
+              if (user && user.language_preference !== language) {
+                refreshUser();
+              }
+            })
+            .catch((error) => {
+              console.error('Error updating language preference:', error);
+            })
+            .finally(() => {
+              isUpdating = false;
+            });
+        }
+      }, 1000); // Increased delay to reduce frequency
+      
+      return () => clearTimeout(timeoutId);
     }
-  }, [language, user, refreshUser]);
+  }, [language, user?.id, user?.language_preference, refreshUser]);
 
   const setLanguage = async (newLanguage: Language) => {
     setLanguageState(newLanguage);

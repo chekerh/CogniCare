@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { Video, Upload, X } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { Video, X } from 'lucide-react';
 
 interface CreateReelProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface CreateReelProps {
 
 export function CreateReel({ onClose, onSuccess }: CreateReelProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
@@ -22,7 +24,7 @@ export function CreateReel({ onClose, onSuccess }: CreateReelProps) {
     if (!file) return;
 
     if (!file.type.startsWith('video/')) {
-      alert('يرجى اختيار ملف فيديو');
+      alert(t('reels.selectVideo'));
       return;
     }
 
@@ -110,20 +112,20 @@ export function CreateReel({ onClose, onSuccess }: CreateReelProps) {
       onSuccess();
     } catch (error) {
       console.error('Error uploading reel:', error);
-      alert('حدث خطأ أثناء رفع الفيديو');
+      alert(t('reels.uploadError'));
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 pooh:bg-opacity-40 flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 pooh:bg-pooh-surface rounded-2xl shadow-2xl max-w-2xl w-full p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">إنشاء مقطع فيديو</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 pooh:text-pooh-brown-dark">{t('reels.create')}</h2>
           <button
             onClick={onClose}
-            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-300 pooh:text-pooh-brown hover:text-red-600 dark:hover:text-red-400 pooh:hover:text-pooh-red hover:bg-red-50 dark:hover:bg-red-900/20 pooh:hover:bg-pooh-red/10 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -133,11 +135,11 @@ export function CreateReel({ onClose, onSuccess }: CreateReelProps) {
           {!videoPreview ? (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-teal-500 transition-colors"
+              className="border-2 border-dashed border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood rounded-lg p-12 text-center cursor-pointer hover:border-teal-500 dark:hover:border-teal-400 pooh:hover:border-pooh-yellow transition-colors"
             >
-              <Video className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-2">انقر لاختيار فيديو</p>
-              <p className="text-sm text-gray-500">MP4, MOV, أو WebM</p>
+              <Video className="w-12 h-12 text-gray-400 dark:text-gray-500 pooh:text-pooh-brown mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-gray-300 pooh:text-pooh-brown mb-2">{t('reels.clickToSelect')}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 pooh:text-pooh-brown">MP4, MOV, {t('reels.or')} WebM</p>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -158,7 +160,7 @@ export function CreateReel({ onClose, onSuccess }: CreateReelProps) {
                   setVideoFile(null);
                   setVideoPreview(null);
                 }}
-                className="absolute top-2 left-2 p-2 bg-red-600 text-white rounded-full hover:bg-red-700"
+                className="absolute top-2 left-2 p-2 bg-red-600 dark:bg-red-500 pooh:bg-pooh-red text-white dark:text-gray-900 pooh:text-pooh-brown-dark rounded-full hover:bg-red-700 dark:hover:bg-red-600 pooh:hover:bg-pooh-red/80"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -166,47 +168,47 @@ export function CreateReel({ onClose, onSuccess }: CreateReelProps) {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              التسمية التوضيحية
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-2">
+              {t('reels.caption')}
             </label>
             <textarea
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-lg focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
               dir="rtl"
-              placeholder="أضف وصفاً لمقطع الفيديو..."
+              placeholder={t('reels.captionPlaceholder')}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              الخصوصية
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 pooh:text-pooh-brown mb-2">
+              {t('reels.privacy')}
             </label>
             <select
               value={visibility}
               onChange={(e) => setVisibility(e.target.value as any)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood bg-white dark:bg-gray-700 pooh:bg-pooh-cream text-gray-900 dark:text-gray-100 pooh:text-pooh-brown-dark rounded-lg focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 pooh:focus:ring-pooh-yellow focus:border-transparent"
             >
-              <option value="public">عام</option>
-              <option value="groups">المجموعات</option>
-              <option value="private">خاص</option>
+              <option value="public">{t('reels.public')}</option>
+              <option value="groups">{t('reels.groups')}</option>
+              <option value="private">{t('reels.private')}</option>
             </select>
           </div>
 
           <div className="flex space-x-3 space-x-reverse justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 pooh:border-pooh-burlywood text-gray-700 dark:text-gray-300 pooh:text-pooh-brown-dark hover:bg-gray-50 dark:hover:bg-gray-700 pooh:hover:bg-pooh-yellow-light transition-colors rounded-lg"
             >
-              إلغاء
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleUpload}
               disabled={uploading || !videoFile}
-              className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-teal-600 dark:bg-teal-500 pooh:bg-pooh-yellow-dark text-white dark:text-gray-900 pooh:text-pooh-brown-dark rounded-lg hover:bg-teal-700 dark:hover:bg-teal-600 pooh:hover:bg-pooh-yellow transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {uploading ? 'جاري الرفع...' : 'نشر'}
+              {uploading ? t('reels.uploading') : t('reels.publish')}
             </button>
           </div>
         </div>
